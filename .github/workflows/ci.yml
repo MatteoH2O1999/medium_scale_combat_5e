@@ -1,0 +1,161 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches:
+      - "master"
+  push:
+    branches:
+      - "master"
+  release:
+    types: [created]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  EXEC_NAME: main
+
+jobs:
+  lint:
+    name: Lint code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Setup Python
+        uses: MatteoH2O1999/setup-python@v3
+        with:
+          python-version: 3
+          cache-build: true
+      - name: Install dependencies
+        run: pip install -r ./requirements.txt -r requirements-dev.txt
+      - name: Black code style
+        run: black --check ./tests ./src
+
+  unit_tests:
+    name: Unit tests with Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    if: always()
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: MatteoH2O1999/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache-build: true
+      - name: Install dependencies
+        run: pip install -r ./requirements.txt -r requirements-dev.txt
+      - name: Run tests
+        run: coverage run -m pytest ./tests/unit_tests
+      - name: Generate report
+        if: ${{ github.event_name != 'release' }}
+        run: |
+          coverage xml
+          coverage report
+      - name: Upload coverage to Codecov
+        if: ${{ github.event_name != 'release' }}
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+
+  e2e_tests:
+    name: End-to-end tests on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Setup Python
+        uses: MatteoH2O1999/setup-python@v3
+        with:
+          python-version: 3
+          cache-build: true
+      - name: Install dependencies
+        run: pip install -r ./requirements.txt -r requirements-dev.txt
+      - name: Build executable
+        run: pyinstaller ./main.spec
+      - name: Run tests
+        run: pytest ./tests/integration_tests
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXEC_NAME }}-${{ runner.os }}
+          retention-days: 1
+          path: ./dist
+
+  upload_to_release:
+    name: Upload executables to release
+    runs-on: ubuntu-latest
+    needs: [lint, unit_tests, e2e_tests]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Setup Python
+        uses: MatteoH2O1999/setup-python@v3
+        with:
+          python-version: 3
+          cache-build: true
+      - name: Install dependencies
+        run: pip install -r ./requirements.txt -r requirements-dev.txt
+      - name: Download executables
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist
+      - name: Zip assets
+        run: python ./.github/scripts/zip_executables.py
+      - name: Upload assets as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.EXEC_NAME }}-executables
+          path: ./to_upload
+      - name: Upload assets to release
+        if: ${{ github.event_name == 'release' }}
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const uploads = path.resolve('./to_upload');
+            const {owner, repo} = context.repo;
+            const tagName = context.ref;
+            const tag = tagName.replace('refs/tags/', '');
+            const releaseResponse = await github.rest.repos.getReleaseByTag({owner, repo, tag});
+            const release_id = releaseResponse.data.id;
+            core.info(`Detected release id: ${release_id}.`);
+            core.startGroup('Uploading assets');
+            for (const file of fs.readdirSync(uploads)) {
+              const filePath = path.join(uploads, file);
+              core.info(`Uploading file ${filePath}...`);
+              await github.rest.repos.uploadReleaseAsset({
+                owner,
+                repo,
+                release_id,
+                name: file,
+                data: fs.readFileSync(filePath),
+                headers: {'Content-Type': 'application/zip'}
+              });
+              core.info('Upload successful.');
+            }
+            core.endGroup();
