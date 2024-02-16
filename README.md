@@ -1,3 +1,3 @@
-# Create a Python App with Github Actions as CI/CD
+# Datasheet generator for medium scale combat for 5e
 
-Use this template to bootstrap the creation of a Python application with CI/CD already set up.
+Datasheet generator for medium scale combat for 5e.

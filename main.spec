@@ -28,14 +28,14 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='main',
+    name='datasheet_generator',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=sys.platform=='win32',
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -45,7 +45,7 @@ exe = EXE(
 
 if sys.platform == 'darwin':
     app = BUNDLE(exe,
-        name='main.app',
+        name='datasheet_generator.app',
         icon=None,
         bundle_identifier=None
     )

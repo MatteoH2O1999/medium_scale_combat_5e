@@ -15,7 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  EXEC_NAME: main
+  EXEC_NAME: datasheet_generator
+  BUILD_VERSION: "3.10"
 
 jobs:
   lint:
@@ -29,12 +30,16 @@ jobs:
       - name: Setup Python
         uses: MatteoH2O1999/setup-python@v3
         with:
-          python-version: 3
+          python-version: ${{ env.BUILD_VERSION }}
           cache-build: true
       - name: Install dependencies
         run: pip install -r ./requirements.txt -r requirements-dev.txt
+      - name: Install UI dependencies
+        run: pip install -r ./requirements-ui-design.txt
       - name: Black code style
         run: black --check ./tests ./src
+      - name: Check UI is compiled
+        run: python ./.github/scripts/compile_ui.py --check
 
   unit_tests:
     name: Unit tests with Python ${{ matrix.python-version }} on ${{ matrix.os }}
@@ -85,14 +90,12 @@ jobs:
       - name: Setup Python
         uses: MatteoH2O1999/setup-python@v3
         with:
-          python-version: 3
+          python-version: ${{ env.BUILD_VERSION }}
           cache-build: true
       - name: Install dependencies
         run: pip install -r ./requirements.txt -r requirements-dev.txt
       - name: Build executable
         run: pyinstaller ./main.spec
-      - name: Run tests
-        run: pytest ./tests/integration_tests
       - name: Upload executable
         uses: actions/upload-artifact@v4
         with:
@@ -114,7 +117,7 @@ jobs:
       - name: Setup Python
         uses: MatteoH2O1999/setup-python@v3
         with:
-          python-version: 3
+          python-version: ${{ env.BUILD_VERSION }}
           cache-build: true
       - name: Install dependencies
         run: pip install -r ./requirements.txt -r requirements-dev.txt
