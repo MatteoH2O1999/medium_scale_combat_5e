@@ -24,7 +24,7 @@ def compile_ui():
             lines = f.readlines()
         output_lines = []
         for line in lines:
-            line = line.replace(str(UI_SRC), "ui")
+            line = line.replace(str(UI_SRC) + os.sep, "ui/")
             output_lines.append(line)
         with open(output_file, "w") as f:
             f.writelines(output_lines)
