@@ -71,9 +71,10 @@ jobs:
           coverage report
       - name: Upload coverage to Codecov
         if: ${{ github.event_name != 'release' }}
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   e2e_tests:
     name: End-to-end tests on ${{ matrix.os }}
