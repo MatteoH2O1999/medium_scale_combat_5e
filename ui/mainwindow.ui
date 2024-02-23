@@ -28,7 +28,10 @@
            <item row="0" column="0">
             <widget class="QLabel" name="nameLabel">
              <property name="text">
-              <string>Name</string>
+              <string>&amp;Name</string>
+             </property>
+             <property name="buddy">
+              <cstring>nameInput</cstring>
              </property>
             </widget>
            </item>
@@ -54,7 +57,10 @@
            <item row="1" column="0">
             <widget class="QLabel" name="hpLabel">
              <property name="text">
-              <string>Average hit points</string>
+              <string>Average &amp;hit points</string>
+             </property>
+             <property name="buddy">
+              <cstring>hpBox</cstring>
              </property>
             </widget>
            </item>
@@ -71,7 +77,10 @@
            <item row="2" column="0">
             <widget class="QLabel" name="acLabel">
              <property name="text">
-              <string>Armor class</string>
+              <string>&amp;Armor class</string>
+             </property>
+             <property name="buddy">
+              <cstring>acBox</cstring>
              </property>
             </widget>
            </item>
@@ -91,7 +100,10 @@
            <item row="3" column="0">
             <widget class="QLabel" name="speedLabel">
              <property name="text">
-              <string>Speed</string>
+              <string>&amp;Speed</string>
+             </property>
+             <property name="buddy">
+              <cstring>speedBox</cstring>
              </property>
             </widget>
            </item>
@@ -114,7 +126,10 @@
            <item row="4" column="0">
             <widget class="QLabel" name="profLabel">
              <property name="text">
-              <string>Proficiency bonus</string>
+              <string>&amp;Proficiency bonus</string>
+             </property>
+             <property name="buddy">
+              <cstring>profBox</cstring>
              </property>
             </widget>
            </item>
@@ -196,14 +211,20 @@
             <item row="1" column="0">
              <widget class="QLabel" name="intLabel">
               <property name="text">
-               <string>Intelligence</string>
+               <string>&amp;Intelligence</string>
+              </property>
+              <property name="buddy">
+               <cstring>intBox</cstring>
               </property>
              </widget>
             </item>
             <item row="1" column="2">
              <widget class="QLabel" name="wisLabel">
               <property name="text">
-               <string>Wisdom</string>
+               <string>&amp;Wisdom</string>
+              </property>
+              <property name="buddy">
+               <cstring>wisBox</cstring>
               </property>
              </widget>
             </item>
@@ -223,7 +244,10 @@
             <item row="0" column="2">
              <widget class="QLabel" name="dexLabel">
               <property name="text">
-               <string>Dexterity</string>
+               <string>&amp;Dexterity</string>
+              </property>
+              <property name="buddy">
+               <cstring>dexBox</cstring>
               </property>
              </widget>
             </item>
@@ -246,14 +270,20 @@
             <item row="0" column="0">
              <widget class="QLabel" name="strLabel">
               <property name="text">
-               <string>Strength</string>
+               <string>S&amp;trength</string>
+              </property>
+              <property name="buddy">
+               <cstring>strBox</cstring>
               </property>
              </widget>
             </item>
             <item row="1" column="4">
              <widget class="QLabel" name="chaLabel">
               <property name="text">
-               <string>Charisma</string>
+               <string>&amp;Charisma</string>
+              </property>
+              <property name="buddy">
+               <cstring>chaBox</cstring>
               </property>
              </widget>
             </item>
@@ -273,7 +303,10 @@
             <item row="0" column="4">
              <widget class="QLabel" name="conLabel">
               <property name="text">
-               <string>Constitution</string>
+               <string>C&amp;onstitution</string>
+              </property>
+              <property name="buddy">
+               <cstring>conBox</cstring>
               </property>
              </widget>
             </item>
