@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
-    <height>660</height>
+    <width>1280</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,6 +153,9 @@
            <property name="title">
             <string>Ability Scores</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
            <property name="flat">
             <bool>false</bool>
            </property>
@@ -213,6 +216,9 @@
               <property name="text">
                <string>&amp;Intelligence</string>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
               <property name="buddy">
                <cstring>intBox</cstring>
               </property>
@@ -222,6 +228,9 @@
              <widget class="QLabel" name="wisLabel">
               <property name="text">
                <string>&amp;Wisdom</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="buddy">
                <cstring>wisBox</cstring>
@@ -245,6 +254,9 @@
              <widget class="QLabel" name="dexLabel">
               <property name="text">
                <string>&amp;Dexterity</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="buddy">
                <cstring>dexBox</cstring>
@@ -272,6 +284,9 @@
               <property name="text">
                <string>S&amp;trength</string>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
               <property name="buddy">
                <cstring>strBox</cstring>
               </property>
@@ -281,6 +296,9 @@
              <widget class="QLabel" name="chaLabel">
               <property name="text">
                <string>&amp;Charisma</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="buddy">
                <cstring>chaBox</cstring>
@@ -304,6 +322,9 @@
              <widget class="QLabel" name="conLabel">
               <property name="text">
                <string>C&amp;onstitution</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="buddy">
                <cstring>conBox</cstring>
@@ -476,7 +497,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>860</width>
+     <width>1280</width>
      <height>21</height>
     </rect>
    </property>
@@ -496,20 +517,12 @@
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="actionUndo"/>
-    <addaction name="actionRedo"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -601,22 +614,6 @@
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>true</bool>
-   </property>
-  </action>
-  <action name="actionUndo">
-   <property name="text">
-    <string>Undo</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Z</string>
-   </property>
-  </action>
-  <action name="actionRedo">
-   <property name="text">
-    <string>Redo</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Y</string>
    </property>
   </action>
  </widget>

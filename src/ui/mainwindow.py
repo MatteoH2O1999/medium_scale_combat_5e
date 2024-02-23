@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(860, 660)
+        MainWindow.resize(1280, 720)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -92,6 +92,11 @@ class Ui_MainWindow(object):
         )
         self.statBlockWidget.addLayout(self.baseStatsWidget)
         self.abilityScoresWidget = QtWidgets.QGroupBox(parent=self.statBlockWidget_2)
+        self.abilityScoresWidget.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.abilityScoresWidget.setFlat(False)
         self.abilityScoresWidget.setCheckable(False)
         self.abilityScoresWidget.setChecked(False)
@@ -121,9 +126,19 @@ class Ui_MainWindow(object):
         self.strBox.setObjectName("strBox")
         self.gridLayout.addWidget(self.strBox, 0, 1, 1, 1)
         self.intLabel = QtWidgets.QLabel(parent=self.abilityScoresWidget)
+        self.intLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.intLabel.setObjectName("intLabel")
         self.gridLayout.addWidget(self.intLabel, 1, 0, 1, 1)
         self.wisLabel = QtWidgets.QLabel(parent=self.abilityScoresWidget)
+        self.wisLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.wisLabel.setObjectName("wisLabel")
         self.gridLayout.addWidget(self.wisLabel, 1, 2, 1, 1)
         self.conBox = QtWidgets.QSpinBox(parent=self.abilityScoresWidget)
@@ -133,6 +148,11 @@ class Ui_MainWindow(object):
         self.conBox.setObjectName("conBox")
         self.gridLayout.addWidget(self.conBox, 0, 5, 1, 1)
         self.dexLabel = QtWidgets.QLabel(parent=self.abilityScoresWidget)
+        self.dexLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.dexLabel.setObjectName("dexLabel")
         self.gridLayout.addWidget(self.dexLabel, 0, 2, 1, 1)
         self.wisBox = QtWidgets.QSpinBox(parent=self.abilityScoresWidget)
@@ -143,9 +163,19 @@ class Ui_MainWindow(object):
         self.wisBox.setObjectName("wisBox")
         self.gridLayout.addWidget(self.wisBox, 1, 3, 1, 1)
         self.strLabel = QtWidgets.QLabel(parent=self.abilityScoresWidget)
+        self.strLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.strLabel.setObjectName("strLabel")
         self.gridLayout.addWidget(self.strLabel, 0, 0, 1, 1)
         self.chaLabel = QtWidgets.QLabel(parent=self.abilityScoresWidget)
+        self.chaLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.chaLabel.setObjectName("chaLabel")
         self.gridLayout.addWidget(self.chaLabel, 1, 4, 1, 1)
         self.chaBox = QtWidgets.QSpinBox(parent=self.abilityScoresWidget)
@@ -155,6 +185,11 @@ class Ui_MainWindow(object):
         self.chaBox.setObjectName("chaBox")
         self.gridLayout.addWidget(self.chaBox, 1, 5, 1, 1)
         self.conLabel = QtWidgets.QLabel(parent=self.abilityScoresWidget)
+        self.conLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.conLabel.setObjectName("conLabel")
         self.gridLayout.addWidget(self.conLabel, 0, 4, 1, 1)
         self.statBlockWidget.addWidget(self.abilityScoresWidget)
@@ -249,13 +284,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 860, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1280, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(parent=self.menubar)
         self.menuFile.setSeparatorsCollapsible(False)
         self.menuFile.setObjectName("menuFile")
-        self.menuEdit = QtWidgets.QMenu(parent=self.menubar)
-        self.menuEdit.setObjectName("menuEdit")
         self.menuHelp = QtWidgets.QMenu(parent=self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         MainWindow.setMenuBar(self.menubar)
@@ -289,10 +322,6 @@ class Ui_MainWindow(object):
         self.actionExportDatasheet.setIconVisibleInMenu(True)
         self.actionExportDatasheet.setShortcutVisibleInContextMenu(True)
         self.actionExportDatasheet.setObjectName("actionExportDatasheet")
-        self.actionUndo = QtGui.QAction(parent=MainWindow)
-        self.actionUndo.setObjectName("actionUndo")
-        self.actionRedo = QtGui.QAction(parent=MainWindow)
-        self.actionRedo.setObjectName("actionRedo")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
@@ -301,10 +330,7 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionExportDatasheet)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
-        self.menuEdit.addAction(self.actionUndo)
-        self.menuEdit.addAction(self.actionRedo)
         self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
         self.nameLabel.setBuddy(self.nameInput)
         self.hpLabel.setBuddy(self.hpBox)
@@ -366,7 +392,6 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Medium Combat for 5e Stat Block Preview"),
         )
         self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.menuEdit.setTitle(_translate("MainWindow", "Edit"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionNew.setText(_translate("MainWindow", "New"))
         self.actionNew.setShortcut(_translate("MainWindow", "Ctrl+N"))
@@ -381,10 +406,6 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Export datasheet")
         )
         self.actionExportDatasheet.setShortcut(_translate("MainWindow", "Ctrl+E"))
-        self.actionUndo.setText(_translate("MainWindow", "Undo"))
-        self.actionUndo.setShortcut(_translate("MainWindow", "Ctrl+Z"))
-        self.actionRedo.setText(_translate("MainWindow", "Redo"))
-        self.actionRedo.setShortcut(_translate("MainWindow", "Ctrl+Y"))
 
 
 from custom_ui.matplotlib import MplCanvas
