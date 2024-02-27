@@ -21,7 +21,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         """
         A generic medium combat for 5e attack
         :param name: The attack's name
-        :param range: The attack's range
+        :param weapon_range: The attack's range
         :param attacks: The number of attacks as a die expression
         :param skill: The attack's skill
         :param strength: The attack's strength
@@ -32,9 +32,9 @@ class UnitAttack(UnitAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"name value should be a non-empty string. Got {name}."
             )
-        if weapon_range < 1 or not isinstance(weapon_range, int):
+        if weapon_range < 0 or not isinstance(weapon_range, int):
             raise InvalidAttackParamError(
-                f"weapon_range value should be a positive integer. Got {weapon_range}."
+                f"weapon_range value should be a non-negative integer. Got {weapon_range}."
             )
         if not isinstance(skill, int) or skill < 2 or skill > 6:
             raise InvalidAttackParamError(

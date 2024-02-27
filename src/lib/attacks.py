@@ -50,9 +50,9 @@ class CreatureAttack(CreatureAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"multiattack value should be an integer > 0. Got {multiattack}."
             )
-        if weapon_range < 1 or not isinstance(weapon_range, int):
+        if weapon_range < 0 or not isinstance(weapon_range, int):
             raise InvalidAttackParamError(
-                f"weapon_range value should be a positive integer. Got {weapon_range}."
+                f"weapon_range value should be a non-negative integer. Got {weapon_range}."
             )
         if not isinstance(target, Target):
             raise InvalidAttackParamError(
@@ -72,7 +72,7 @@ class CreatureAttack(CreatureAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"dice_average_damage should be a non-negative float. Got {dice_average_damage}."
             )
-        if not isinstance(fixed_damage, float):
+        if fixed_damage != 0 and not isinstance(fixed_damage, float):
             raise InvalidAttackParamError(
                 f"fixed_damage should be a float. Got {fixed_damage}."
             )
@@ -177,9 +177,9 @@ class AttackRollAttack(Attack):
             raise InvalidAttackParamError(
                 f"name value sould be a non-empty string. Got {name}."
             )
-        if weapon_range < 1 or not isinstance(weapon_range, int):
+        if weapon_range < 0 or not isinstance(weapon_range, int):
             raise InvalidAttackParamError(
-                f"weapon_range should be a positive integer. Got {weapon_range}."
+                f"weapon_range should be a non-negative integer. Got {weapon_range}."
             )
         if multiattack < 1 or not isinstance(multiattack, int):
             raise InvalidAttackParamError(
@@ -341,9 +341,9 @@ class SavingThrowAttack(Attack):
             raise InvalidAttackParamError(
                 f"name value sould be a non-empty string. Got {name}."
             )
-        if weapon_range < 1 or not isinstance(weapon_range, int):
+        if weapon_range < 0 or not isinstance(weapon_range, int):
             raise InvalidAttackParamError(
-                f"weapon_range should be a positive integer. Got {weapon_range}."
+                f"weapon_range should be a non-negative integer. Got {weapon_range}."
             )
         if multiattack < 1 or not isinstance(multiattack, int):
             raise InvalidAttackParamError(
