@@ -232,8 +232,10 @@ class AttackListModel(QtCore.QAbstractListModel):
         self.model = model
 
     def data(self, index, role=None):
+        attacks = self.model.attacks
+        attacks.sort(key=lambda x: x.name)
         if role == QtCore.Qt.ItemDataRole.DisplayRole:
-            return self.model.attacks[index.row()].name
+            return attacks[index.row()].name
 
     def rowCount(self, parent=None):
         return len(self.model.attacks)
@@ -249,6 +251,7 @@ class MultiattackListModel(QtCore.QAbstractListModel):
         ret = []
         for multiattack_name, _ in self.model.multiattacks.items():
             ret.append(multiattack_name)
+        ret.sort()
         return ret
 
     def data(self, index, role=None):
@@ -257,3 +260,39 @@ class MultiattackListModel(QtCore.QAbstractListModel):
 
     def rowCount(self, parent=None):
         return len(self.multiattack_names)
+
+
+class MultiattackDetailedListModel(QtCore.QAbstractListModel):
+    def __init__(self, attacks: List[str], *args, **kwargs):
+        super(MultiattackDetailedListModel, self).__init__(*args, **kwargs)
+        self.model: List[str] = attacks
+
+    @property
+    def attack_names(self) -> List[str]:
+        ret = []
+        for attack in self.model:
+            if attack not in ret:
+                ret.append(attack)
+        ret.sort()
+        return ret
+
+    def data(self, index, role=None):
+        count = 0
+        name = self.attack_names[index.row()]
+        for attack in self.model:
+            if attack == name:
+                count += 1
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
+            ret = name
+            if count > 1:
+                ret += f" (x{count})"
+            return ret
+
+    def rowCount(self, parent=None):
+        return len(self.attack_names)
+
+    def add(self, attack: str):
+        self.model.append(attack)
+
+    def remove(self, attack: str):
+        self.model.remove(attack)

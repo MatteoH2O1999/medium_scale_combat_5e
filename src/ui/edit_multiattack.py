@@ -12,9 +12,62 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(400, 300)
+        Dialog.resize(800, 600)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.formLayout = QtWidgets.QFormLayout()
+        self.formLayout.setObjectName("formLayout")
+        self.nameLabel = QtWidgets.QLabel(parent=Dialog)
+        self.nameLabel.setObjectName("nameLabel")
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.nameLabel
+        )
+        self.nameInput = QtWidgets.QLineEdit(parent=Dialog)
+        self.nameInput.setMaxLength(256)
+        self.nameInput.setClearButtonEnabled(True)
+        self.nameInput.setObjectName("nameInput")
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.FieldRole, self.nameInput
+        )
+        self.verticalLayout.addLayout(self.formLayout)
+        self.attackLabel = QtWidgets.QLabel(parent=Dialog)
+        self.attackLabel.setObjectName("attackLabel")
+        self.verticalLayout.addWidget(self.attackLabel)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.availableAttacksList = QtWidgets.QListView(parent=Dialog)
+        self.availableAttacksList.setObjectName("availableAttacksList")
+        self.horizontalLayout.addWidget(self.availableAttacksList)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        spacerItem = QtWidgets.QSpacerItem(
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
+        self.verticalLayout_2.addItem(spacerItem)
+        self.addAttackButton = QtWidgets.QPushButton(parent=Dialog)
+        self.addAttackButton.setObjectName("addAttackButton")
+        self.verticalLayout_2.addWidget(self.addAttackButton)
+        self.removeAttackButton = QtWidgets.QPushButton(parent=Dialog)
+        self.removeAttackButton.setObjectName("removeAttackButton")
+        self.verticalLayout_2.addWidget(self.removeAttackButton)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
+        self.verticalLayout_2.addItem(spacerItem1)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
+        self.multiattackList = QtWidgets.QListView(parent=Dialog)
+        self.multiattackList.setObjectName("multiattackList")
+        self.horizontalLayout.addWidget(self.multiattackList)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.statusText = QtWidgets.QLabel(parent=Dialog)
+        self.statusText.setObjectName("statusText")
+        self.verticalLayout.addWidget(self.statusText)
         self.dialogButtons = QtWidgets.QDialogButtonBox(parent=Dialog)
         self.dialogButtons.setStandardButtons(
             QtWidgets.QDialogButtonBox.StandardButton.Cancel
@@ -23,6 +76,7 @@ class Ui_Dialog(object):
         self.dialogButtons.setCenterButtons(False)
         self.dialogButtons.setObjectName("dialogButtons")
         self.verticalLayout.addWidget(self.dialogButtons)
+        self.nameLabel.setBuddy(self.nameInput)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -30,3 +84,8 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Multiattack editor"))
+        self.nameLabel.setText(_translate("Dialog", "Multiattack &name"))
+        self.attackLabel.setText(_translate("Dialog", "Attacks"))
+        self.addAttackButton.setText(_translate("Dialog", "Add"))
+        self.removeAttackButton.setText(_translate("Dialog", "Remove"))
+        self.statusText.setText(_translate("Dialog", "status"))

@@ -230,7 +230,7 @@ class AttackRollAttack(Attack):
         return self._name
 
     def combine(self, other: Attack) -> Attack:
-        if self != other:
+        if not self.equals(other):
             raise InvalidAttackParamError(f"Expected {self.name}. Got {other.name}")
         assert isinstance(other, AttackRollAttack)
         return AttackRollAttack(
@@ -246,6 +246,23 @@ class AttackRollAttack(Attack):
             self._to_hit_proficiency,
             self._damage_scaling,
             self._damage_proficiency,
+        )
+
+    def equals(self, other: object) -> bool:
+        if not isinstance(other, AttackRollAttack):
+            return False
+        return (
+            self._name == other._name
+            and self._range == other._range
+            and self._target == other._target
+            and self._base_damage == other._base_damage
+            and self._base_to_hit == other._base_to_hit
+            and self._ability_score_scaling == other._ability_score_scaling
+            and self._to_hit_scaling == other._to_hit_scaling
+            and self._damage_scaling == other._damage_scaling
+            and self._to_hit_proficiency == other._to_hit_proficiency
+            and self._damage_proficiency == other._damage_proficiency
+            and self._ranged == other._ranged
         )
 
     def __eq__(self, other) -> bool:
@@ -376,7 +393,7 @@ class SavingThrowAttack(Attack):
         return self._name
 
     def combine(self, other: Attack) -> Attack:
-        if self != other:
+        if not self.equals(other):
             raise InvalidAttackParamError(f"Expected {self.name}. Got {other.name}")
         assert isinstance(other, SavingThrowAttack)
         return SavingThrowAttack(
@@ -399,6 +416,21 @@ class SavingThrowAttack(Attack):
             self._name == other._name
             and self._range == other._range
             and self._multiattack == other._multiattack
+            and self._target == other._target
+            and self._base_damage == other._base_damage
+            and self._dc == other._dc
+            and self._ranged == other._ranged
+            and self._ability_score_scaling == other._ability_score_scaling
+            and self._damage_scaling == other._damage_scaling
+            and self._damage_proficiency == other._damage_proficiency
+        )
+
+    def equals(self, other: object) -> bool:
+        if not isinstance(other, SavingThrowAttack):
+            return False
+        return (
+            self._name == other._name
+            and self._range == other._range
             and self._target == other._target
             and self._base_damage == other._base_damage
             and self._dc == other._dc

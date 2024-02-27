@@ -16,6 +16,7 @@ from model import (
     AttackRollModel,
     AttackListModel,
     MultiattackListModel,
+    MultiattackDetailedListModel,
     SavingThrowModel,
     from_model,
 )
@@ -283,12 +284,107 @@ class MultiattackDialog(QtWidgets.QDialog, Ui_MultiattackDialog):
     def __init__(self, model: StatBlockModel, name: str = None, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        self.name = name or "multiattack name"
+        self.old_name = name
+        self.name = name or ""
         self.model = StatBlockModel()
         self.model.copy_from(model)
         self.attacks = self.model.multiattacks.get(name, [])
+        self.attacks_model = AttackListModel(self.model)
+        self.multiattack_model = MultiattackDetailedListModel(self.attacks)
+        self.saveButton = self.dialogButtons.button(
+            QtWidgets.QDialogButtonBox.StandardButton.Save
+        )
+        self.availableAttacksList.setModel(self.attacks_model)
+        self.multiattackList.setModel(self.multiattack_model)
+        self.nameInput.textChanged.connect(self.update_model)
         self.dialogButtons.rejected.connect(self.discard)
         self.dialogButtons.accepted.connect(self.save)
+        self.availableAttacksList.selectionModel().selectionChanged.connect(
+            self.update_model
+        )
+        self.availableAttacksList.activated.connect(self.add)
+        self.multiattackList.selectionModel().selectionChanged.connect(
+            self.update_model
+        )
+        self.multiattackList.activated.connect(self.remove)
+        self.addAttackButton.clicked.connect(self.add)
+        self.removeAttackButton.clicked.connect(self.remove)
+        self.nameInput.setText(self.name)
+        self.update_model()
+
+    def add(self):
+        selected_attack_name = self.model.attacks[
+            self.availableAttacksList.currentIndex().row()
+        ].name
+        self.multiattack_model.add(selected_attack_name)
+        self.update_model()
+
+    def remove(self):
+        self.multiattack_model.remove(
+            self.multiattack_model.attack_names[
+                self.multiattackList.currentIndex().row()
+            ]
+        )
+        self.update_model()
+
+    def update_model(self):
+        self.name = self.nameInput.text()
+        self.update_gui()
+
+    def update_status(self, status: str, green):
+        self.statusText.setText(status)
+        if green:
+            self.statusText.setStyleSheet("QLabel {color: green}")
+        else:
+            self.statusText.setStyleSheet("QLabel {color: red}")
+
+    def update_gui(self):
+        self.multiattack_model.layoutChanged.emit()
+        self.addAttackButton.setEnabled(False)
+        self.removeAttackButton.setEnabled(False)
+        if self.availableAttacksList.selectedIndexes():
+            self.addAttackButton.setEnabled(True)
+        if self.attacks and self.multiattackList.selectedIndexes():
+            self.removeAttackButton.setEnabled(True)
+
+        if not self.name:
+            self.saveButton.setEnabled(False)
+            self.update_status("Invalid multiattack name", False)
+            return
+        if (
+            self.old_name
+            and self.old_name != self.name
+            and self.name in self.model.multiattacks.keys()
+        ):
+            self.saveButton.setEnabled(False)
+            self.update_status(f"Duplicate multiattack name: {self.name}", False)
+            return
+        if not self.old_name and self.name in self.model.multiattacks.keys():
+            self.saveButton.setEnabled(False)
+            self.update_status(f"Duplicate multiattack name: {self.name}", False)
+            return
+        if len(self.attacks) < 2:
+            self.saveButton.setEnabled(False)
+            self.update_status(
+                f"At least 2 attacks must be selected. Got {len(self.attacks)}", False
+            )
+            return
+        try:
+            model = StatBlockModel()
+            model.copy_from(self.model)
+            model.multiattacks[self.name] = self.attacks
+            from_model(model)
+        except ValueError as e:
+            self.saveButton.setEnabled(False)
+            self.update_status(str(e), False)
+            if "Claw" in str(e):
+                model = StatBlockModel()
+                model.copy_from(self.model)
+                model.multiattacks[self.name] = self.attacks
+                from_model(model)
+            return
+        self.saveButton.setEnabled(True)
+        self.update_status("Valid \u2714", True)
 
     def save(self):
         self.accept()
@@ -327,9 +423,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.addSaveAttackButton.clicked.connect(self.edit_saving_throw_attack)
         self.editAttackButton.clicked.connect(self.edit_attack)
         self.attacksListView.activated.connect(self.edit_attack)
-        self.addMultiattackButton.clicked.connect(self.edit_multiattack)
-        self.editMultiattackButton.clicked.connect(self.edit_multiattack)
-        self.multiattackListView.activated.connect(self.edit_multiattack)
+        self.addMultiattackButton.clicked.connect(lambda: self.edit_multiattack(""))
+        self.editMultiattackButton.clicked.connect(lambda: self.edit_multiattack())
+        self.multiattackListView.activated.connect(lambda: self.edit_multiattack())
         self.deleteAttackButton.clicked.connect(self.delete_attack)
         self.deleteMultiattackButton.clicked.connect(self.delete_multiattack)
         self.attacksListView.selectionModel().selectionChanged.connect(self.update_gui)
@@ -399,16 +495,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.update_gui()
 
     def edit_multiattack(self, name: str = None):
-        dialog = MultiattackDialog(self.model, name, self)
-        if not name and self.multiattackListView.selectedIndexes():
+        if name is None and self.multiattackListView.selectedIndexes():
             name = self.multiattacks_model.multiattack_names[
                 self.multiattackListView.selectedIndexes()[0].row()
             ]
+        if not name:
+            name = ""
         if name and name not in self.model.multiattacks.keys():
             raise RuntimeError(f"Invalid multiattack name: {name}")
+        dialog = MultiattackDialog(self.model, name, self)
         if dialog.exec():
             if name:
                 if name != dialog.name:
+                    if dialog.name in self.model.multiattacks.keys():
+                        raise RuntimeError(f"Duplicate name: {dialog.name}")
                     self.model.multiattacks.pop(name)
                 self.model.multiattacks[dialog.name] = dialog.attacks
             else:
@@ -435,12 +535,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.deleteAttackButton.setEnabled(False)
         self.editMultiattackButton.setEnabled(False)
         self.deleteMultiattackButton.setEnabled(False)
+        self.addMultiattackButton.setEnabled(False)
         if self.attacksListView.selectedIndexes():
             self.editAttackButton.setEnabled(True)
             self.deleteAttackButton.setEnabled(True)
-        if self.multiattackListView.selectedIndexes():
-            self.editMultiattackButton.setEnabled(True)
-            self.deleteMultiattackButton.setEnabled(True)
+        if self.attacks_model.rowCount() > 0:
+            self.addMultiattackButton.setEnabled(True)
+            if self.multiattackListView.selectedIndexes():
+                self.editMultiattackButton.setEnabled(True)
+                self.deleteMultiattackButton.setEnabled(True)
         self.update_stat_block()
 
     def update_model(self, name, value):
