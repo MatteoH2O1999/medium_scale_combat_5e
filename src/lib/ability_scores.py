@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 from enum import Enum, auto, unique
 
@@ -15,6 +16,23 @@ class Scores(Enum):
     INTELLIGENCE = auto()
     WISDOM = auto()
     CHARISMA = auto()
+
+    @staticmethod
+    def from_string(string: str) -> Optional["Scores"]:
+        normalized_string = string.lower().strip()
+        if normalized_string == "strength":
+            return Scores.STRENGTH
+        if normalized_string == "dexterity":
+            return Scores.DEXTERITY
+        if normalized_string == "constitution":
+            return Scores.CONSTITUTION
+        if normalized_string == "intelligence":
+            return Scores.INTELLIGENCE
+        if normalized_string == "wisdom":
+            return Scores.WISDOM
+        if normalized_string == "charisma":
+            return Scores.CHARISMA
+        return None
 
 
 class AbilityScoreOutOfRangeError(ValueError):
