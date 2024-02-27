@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>800</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,12 +15,317 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="nameLabel">
+       <property name="text">
+        <string>Attack &amp;name</string>
+       </property>
+       <property name="buddy">
+        <cstring>attackNameInput</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="attackNameInput">
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="rangedLabel">
+       <property name="text">
+        <string>Attack &amp;type</string>
+       </property>
+       <property name="buddy">
+        <cstring>attackTypeInput</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="attackTypeInput">
+       <property name="editable">
+        <bool>false</bool>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
+       </property>
+       <item>
+        <property name="text">
+         <string>Melee</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Ranged</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="rangeLabel">
+       <property name="text">
+        <string>&amp;Range</string>
+       </property>
+       <property name="buddy">
+        <cstring>attackRangeInput</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="attackRangeInput">
+       <property name="suffix">
+        <string> ft.</string>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="multihitLabel">
+       <property name="text">
+        <string>Number of &amp;hits</string>
+       </property>
+       <property name="buddy">
+        <cstring>multihitInput</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="multihitInput">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="dcLabel">
+       <property name="text">
+        <string>Save &amp;DC</string>
+       </property>
+       <property name="buddy">
+        <cstring>dcInput</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QSpinBox" name="dcInput">
+       <property name="minimum">
+        <number>-30</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="targetGroupBox">
+     <property name="title">
+      <string>Target</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="targetLabel">
+        <property name="text">
+         <string>Attack tar&amp;get</string>
+        </property>
+        <property name="buddy">
+         <cstring>targetTypeInput</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="targetTypeInput">
+        <item>
+         <property name="text">
+          <string>Single Target</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cone</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cube</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Square</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cylinder</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sphere</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Circle</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Line</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="firstParameterLabel">
+        <property name="text">
+         <string>First parameter</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="firstParameterInput">
+        <property name="suffix">
+         <string> ft.</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="secondParameterLabel">
+        <property name="text">
+         <string>Second parameter</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="secondParameterInput">
+        <property name="suffix">
+         <string> ft.</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="damageGroupBox">
+     <property name="title">
+      <string>Damage</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QFormLayout" name="formLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="baseDamageLabel">
+          <property name="text">
+           <string>&amp;Base damage</string>
+          </property>
+          <property name="buddy">
+           <cstring>baseDamageInput</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="baseDamageInput">
+          <property name="maxLength">
+           <number>256</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="scalingLabel">
+          <property name="text">
+           <string>Ability score &amp;scaling</string>
+          </property>
+          <property name="buddy">
+           <cstring>abilityScoreScalingInput</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="abilityScoreScalingInput">
+          <item>
+           <property name="text">
+            <string>None</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Strength</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Dexterity</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Constitution</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Intelligence</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wisdom</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Charisma</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="damageScalingCheck">
+        <property name="text">
+         <string>Add ability score &amp;modifier to damage</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="damageProficiencyCheck">
+        <property name="text">
+         <string>Add &amp;proficiency bonus to damage</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="statusText">
+     <property name="text">
+      <string>status</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="dialogButtons">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
      </property>
     </widget>
    </item>

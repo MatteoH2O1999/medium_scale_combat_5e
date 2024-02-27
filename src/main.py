@@ -5,6 +5,7 @@ from custom_ui.datasheet import (
     datasheet_from_unit_stat_block,
     datasheet_from_stat_block,
 )
+from lib.ability_scores import Scores
 from lib.unit_stat_block import from_stat_block
 from ui.edit_multiattack import Ui_Dialog as Ui_MultiattackDialog
 from ui.edit_roll_attack import Ui_Dialog as Ui_AttackRollDialog
@@ -26,13 +27,124 @@ class AttackRollDialog(QtWidgets.QDialog, Ui_AttackRollDialog):
     ):
         super().__init__(parent)
         self.setupUi(self)
+        self.model = StatBlockModel()
+        self.model.copy_from(model)
+        self.saveButton = self.dialogButtons.button(
+            QtWidgets.QDialogButtonBox.StandardButton.Save
+        )
         self.attack = AttackRollModel()
         if attack:
             self.attack.copy_from(attack)
-        self.model = StatBlockModel()
-        self.model.copy_from(model)
+            for a in self.model.attacks:
+                if a.name == attack.name:
+                    self.model.attacks.remove(a)
+                    break
+            self.load_attack()
         self.dialogButtons.rejected.connect(self.discard)
         self.dialogButtons.accepted.connect(self.save)
+        self.attackNameInput.textChanged.connect(self.update_model)
+        self.attackTypeInput.currentIndexChanged.connect(self.update_model)
+        self.attackRangeInput.valueChanged.connect(self.update_model)
+        self.multihitInput.valueChanged.connect(self.update_model)
+        self.abilityScoreScalingInput.currentIndexChanged.connect(self.update_model)
+        self.targetTypeInput.currentIndexChanged.connect(self.update_model)
+        self.firstParameterInput.valueChanged.connect(self.update_model)
+        self.secondParameterInput.valueChanged.connect(self.update_model)
+        self.baseToHitInput.valueChanged.connect(self.update_model)
+        self.toHitScalingCheck.stateChanged.connect(self.update_model)
+        self.toHitProficiencyCheck.stateChanged.connect(self.update_model)
+        self.baseDamageInput.textChanged.connect(self.update_model)
+        self.damageScalingCheck.stateChanged.connect(self.update_model)
+        self.damageProficiencyCheck.stateChanged.connect(self.update_model)
+        self.update_gui()
+
+    def load_attack(self):
+        self.attackNameInput.setText(self.attack.name)
+        ranged_text = "Ranged" if self.attack.ranged else "Melee"
+        self.attackTypeInput.setCurrentIndex(self.attackTypeInput.findText(ranged_text))
+        self.attackRangeInput.setValue(self.attack.weapon_range)
+        self.multihitInput.setValue(self.attack.multiattack)
+        score = self.attack.ability_score_scaling
+        if score is None:
+            score = "None"
+        else:
+            score = score.name.lower().capitalize()
+        self.abilityScoreScalingInput.setCurrentIndex(
+            self.abilityScoreScalingInput.findText(score)
+        )
+        self.targetTypeInput.setCurrentIndex(
+            self.targetTypeInput.findText(
+                " ".join([s.capitalize() for s in self.attack.target.name.split(" ")])
+            )
+        )
+        self.firstParameterInput.setValue(self.attack.target.first_param)
+        self.secondParameterInput.setValue(self.attack.target.second_param)
+        self.baseToHitInput.setValue(self.attack.base_to_hit)
+        self.toHitScalingCheck.setChecked(self.attack.to_hit_scaling)
+        self.toHitProficiencyCheck.setChecked(self.attack.to_hit_proficiency)
+        self.baseDamageInput.setText(self.attack.base_damage)
+        self.damageScalingCheck.setChecked(self.attack.damage_scaling)
+        self.damageProficiencyCheck.setChecked(self.attack.damage_proficiency)
+
+    def update_model(self):
+        self.attack.name = self.attackNameInput.text().strip()
+        self.attack.ranged = self.attackTypeInput.currentText() == "Ranged"
+        self.attack.weapon_range = self.attackRangeInput.value()
+        self.attack.multiattack = self.multihitInput.value()
+        self.attack.ability_score_scaling = Scores.from_string(
+            self.abilityScoreScalingInput.currentText()
+        )
+        self.attack.target.name = self.targetTypeInput.currentText().lower().strip()
+        self.attack.target.first_param = self.firstParameterInput.value()
+        self.attack.target.second_param = self.secondParameterInput.value()
+        self.attack.base_to_hit = self.baseToHitInput.value()
+        self.attack.to_hit_scaling = self.toHitScalingCheck.isChecked()
+        self.attack.to_hit_proficiency = self.toHitProficiencyCheck.isChecked()
+        self.attack.base_damage = self.baseDamageInput.text().lower().strip()
+        self.attack.damage_scaling = self.damageScalingCheck.isChecked()
+        self.attack.damage_proficiency = self.damageProficiencyCheck.isChecked()
+        self.update_gui()
+
+    def update_gui(self):
+        if not self.attack.to_hit_scaling and not self.attack.damage_scaling:
+            if self.abilityScoreScalingInput.currentIndex() != 0:
+                self.abilityScoreScalingInput.setCurrentIndex(0)
+            self.abilityScoreScalingInput.setEnabled(False)
+        else:
+            self.abilityScoreScalingInput.setEnabled(True)
+
+        label_1, label_2 = self.attack.target.parameters()
+        if label_1 is None:
+            self.firstParameterLabel.setText("")
+            self.firstParameterInput.setEnabled(False)
+        else:
+            self.firstParameterLabel.setText(label_1)
+            self.firstParameterInput.setEnabled(True)
+        if label_2 is None:
+            self.secondParameterLabel.setText("")
+            self.secondParameterInput.setEnabled(False)
+        else:
+            self.secondParameterLabel.setText(label_2)
+            self.secondParameterInput.setEnabled(True)
+
+        try:
+            model = StatBlockModel()
+            model.copy_from(self.model)
+            model.attacks.append(self.attack)
+            from_model(model)
+        except ValueError as e:
+            self.saveButton.setEnabled(False)
+            self.update_status(str(e), False)
+            return
+        self.saveButton.setEnabled(True)
+        self.update_status("Valid \u2714", True)
+
+    def update_status(self, status: str, green):
+        self.statusText.setText(status)
+        if green:
+            self.statusText.setStyleSheet("QLabel {color: green}")
+        else:
+            self.statusText.setStyleSheet("QLabel {color: red}")
 
     def save(self):
         self.accept()
@@ -47,13 +159,118 @@ class SavingThrowDialog(QtWidgets.QDialog, Ui_SavingThrowDialog):
     ):
         super().__init__(parent)
         self.setupUi(self)
+        self.model = StatBlockModel()
+        self.model.copy_from(model)
+        self.saveButton = self.dialogButtons.button(
+            QtWidgets.QDialogButtonBox.StandardButton.Save
+        )
         self.attack = SavingThrowModel()
         if attack:
             self.attack.copy_from(attack)
-        self.model = StatBlockModel()
-        self.model.copy_from(model)
+            for a in self.model.attacks:
+                if a.name == attack.name:
+                    self.model.attacks.remove(a)
+                    break
+            self.load_attack()
         self.dialogButtons.rejected.connect(self.discard)
         self.dialogButtons.accepted.connect(self.save)
+        self.attackNameInput.textChanged.connect(self.update_model)
+        self.attackTypeInput.currentIndexChanged.connect(self.update_model)
+        self.attackRangeInput.valueChanged.connect(self.update_model)
+        self.multihitInput.valueChanged.connect(self.update_model)
+        self.abilityScoreScalingInput.currentIndexChanged.connect(self.update_model)
+        self.targetTypeInput.currentIndexChanged.connect(self.update_model)
+        self.firstParameterInput.valueChanged.connect(self.update_model)
+        self.secondParameterInput.valueChanged.connect(self.update_model)
+        self.dcInput.valueChanged.connect(self.update_model)
+        self.baseDamageInput.textChanged.connect(self.update_model)
+        self.damageScalingCheck.stateChanged.connect(self.update_model)
+        self.damageProficiencyCheck.stateChanged.connect(self.update_model)
+        self.update_gui()
+
+    def load_attack(self):
+        self.attackNameInput.setText(self.attack.name)
+        ranged_text = "Ranged" if self.attack.ranged else "Melee"
+        self.attackTypeInput.setCurrentIndex(self.attackTypeInput.findText(ranged_text))
+        self.attackRangeInput.setValue(self.attack.weapon_range)
+        self.multihitInput.setValue(self.attack.multiattack)
+        score = self.attack.ability_score_scaling
+        if score is None:
+            score = "None"
+        else:
+            score = score.name.lower().capitalize()
+        self.abilityScoreScalingInput.setCurrentIndex(
+            self.abilityScoreScalingInput.findText(score)
+        )
+        self.targetTypeInput.setCurrentIndex(
+            self.targetTypeInput.findText(
+                " ".join([s.capitalize() for s in self.attack.target.name.split(" ")])
+            )
+        )
+        self.firstParameterInput.setValue(self.attack.target.first_param)
+        self.secondParameterInput.setValue(self.attack.target.second_param)
+        self.dcInput.setValue(self.attack.dc)
+        self.baseDamageInput.setText(self.attack.base_damage)
+        self.damageScalingCheck.setChecked(self.attack.damage_scaling)
+        self.damageProficiencyCheck.setChecked(self.attack.damage_proficiency)
+
+    def update_model(self):
+        self.attack.name = self.attackNameInput.text().strip()
+        self.attack.ranged = self.attackTypeInput.currentText() == "Ranged"
+        self.attack.weapon_range = self.attackRangeInput.value()
+        self.attack.multiattack = self.multihitInput.value()
+        self.attack.ability_score_scaling = Scores.from_string(
+            self.abilityScoreScalingInput.currentText()
+        )
+        self.attack.target.name = self.targetTypeInput.currentText().lower().strip()
+        self.attack.target.first_param = self.firstParameterInput.value()
+        self.attack.target.second_param = self.secondParameterInput.value()
+        self.attack.dc = self.dcInput.value()
+        self.attack.base_damage = self.baseDamageInput.text().lower().strip()
+        self.attack.damage_scaling = self.damageScalingCheck.isChecked()
+        self.attack.damage_proficiency = self.damageProficiencyCheck.isChecked()
+        self.update_gui()
+
+    def update_gui(self):
+        if not self.attack.damage_scaling:
+            if self.abilityScoreScalingInput.currentIndex() != 0:
+                self.abilityScoreScalingInput.setCurrentIndex(0)
+            self.abilityScoreScalingInput.setEnabled(False)
+        else:
+            self.abilityScoreScalingInput.setEnabled(True)
+
+        label_1, label_2 = self.attack.target.parameters()
+        if label_1 is None:
+            self.firstParameterLabel.setText("")
+            self.firstParameterInput.setEnabled(False)
+        else:
+            self.firstParameterLabel.setText(label_1)
+            self.firstParameterInput.setEnabled(True)
+        if label_2 is None:
+            self.secondParameterLabel.setText("")
+            self.secondParameterInput.setEnabled(False)
+        else:
+            self.secondParameterLabel.setText(label_2)
+            self.secondParameterInput.setEnabled(True)
+
+        try:
+            model = StatBlockModel()
+            model.copy_from(self.model)
+            model.attacks.append(self.attack)
+            from_model(model)
+        except ValueError as e:
+            self.saveButton.setEnabled(False)
+            self.update_status(str(e), False)
+            return
+        self.saveButton.setEnabled(True)
+        self.update_status("Valid \u2714", True)
+
+    def update_status(self, status: str, green):
+        self.statusText.setText(status)
+        if green:
+            self.statusText.setStyleSheet("QLabel {color: green}")
+        else:
+            self.statusText.setStyleSheet("QLabel {color: red}")
 
     def save(self):
         self.accept()

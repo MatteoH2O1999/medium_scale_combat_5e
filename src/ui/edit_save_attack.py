@@ -12,17 +12,177 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(400, 300)
+        Dialog.resize(800, 616)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.formLayout = QtWidgets.QFormLayout()
+        self.formLayout.setObjectName("formLayout")
+        self.nameLabel = QtWidgets.QLabel(parent=Dialog)
+        self.nameLabel.setObjectName("nameLabel")
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.nameLabel
+        )
+        self.attackNameInput = QtWidgets.QLineEdit(parent=Dialog)
+        self.attackNameInput.setClearButtonEnabled(True)
+        self.attackNameInput.setObjectName("attackNameInput")
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.FieldRole, self.attackNameInput
+        )
+        self.rangedLabel = QtWidgets.QLabel(parent=Dialog)
+        self.rangedLabel.setObjectName("rangedLabel")
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.rangedLabel
+        )
+        self.attackTypeInput = QtWidgets.QComboBox(parent=Dialog)
+        self.attackTypeInput.setEditable(False)
+        self.attackTypeInput.setInsertPolicy(QtWidgets.QComboBox.InsertPolicy.NoInsert)
+        self.attackTypeInput.setObjectName("attackTypeInput")
+        self.attackTypeInput.addItem("")
+        self.attackTypeInput.addItem("")
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.attackTypeInput
+        )
+        self.rangeLabel = QtWidgets.QLabel(parent=Dialog)
+        self.rangeLabel.setObjectName("rangeLabel")
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.rangeLabel
+        )
+        self.attackRangeInput = QtWidgets.QSpinBox(parent=Dialog)
+        self.attackRangeInput.setMaximum(9999)
+        self.attackRangeInput.setObjectName("attackRangeInput")
+        self.formLayout.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.attackRangeInput
+        )
+        self.multihitLabel = QtWidgets.QLabel(parent=Dialog)
+        self.multihitLabel.setObjectName("multihitLabel")
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.multihitLabel
+        )
+        self.multihitInput = QtWidgets.QSpinBox(parent=Dialog)
+        self.multihitInput.setMinimum(1)
+        self.multihitInput.setObjectName("multihitInput")
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.ItemRole.FieldRole, self.multihitInput
+        )
+        self.dcLabel = QtWidgets.QLabel(parent=Dialog)
+        self.dcLabel.setObjectName("dcLabel")
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.ItemRole.LabelRole, self.dcLabel
+        )
+        self.dcInput = QtWidgets.QSpinBox(parent=Dialog)
+        self.dcInput.setMinimum(-30)
+        self.dcInput.setObjectName("dcInput")
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.ItemRole.FieldRole, self.dcInput
+        )
+        self.verticalLayout.addLayout(self.formLayout)
+        self.targetGroupBox = QtWidgets.QGroupBox(parent=Dialog)
+        self.targetGroupBox.setObjectName("targetGroupBox")
+        self.formLayout_2 = QtWidgets.QFormLayout(self.targetGroupBox)
+        self.formLayout_2.setObjectName("formLayout_2")
+        self.targetLabel = QtWidgets.QLabel(parent=self.targetGroupBox)
+        self.targetLabel.setObjectName("targetLabel")
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.targetLabel
+        )
+        self.targetTypeInput = QtWidgets.QComboBox(parent=self.targetGroupBox)
+        self.targetTypeInput.setObjectName("targetTypeInput")
+        self.targetTypeInput.addItem("")
+        self.targetTypeInput.addItem("")
+        self.targetTypeInput.addItem("")
+        self.targetTypeInput.addItem("")
+        self.targetTypeInput.addItem("")
+        self.targetTypeInput.addItem("")
+        self.targetTypeInput.addItem("")
+        self.targetTypeInput.addItem("")
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.FieldRole, self.targetTypeInput
+        )
+        self.firstParameterLabel = QtWidgets.QLabel(parent=self.targetGroupBox)
+        self.firstParameterLabel.setObjectName("firstParameterLabel")
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.firstParameterLabel
+        )
+        self.firstParameterInput = QtWidgets.QSpinBox(parent=self.targetGroupBox)
+        self.firstParameterInput.setMinimum(1)
+        self.firstParameterInput.setMaximum(9999)
+        self.firstParameterInput.setObjectName("firstParameterInput")
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.firstParameterInput
+        )
+        self.secondParameterLabel = QtWidgets.QLabel(parent=self.targetGroupBox)
+        self.secondParameterLabel.setObjectName("secondParameterLabel")
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.LabelRole, self.secondParameterLabel
+        )
+        self.secondParameterInput = QtWidgets.QSpinBox(parent=self.targetGroupBox)
+        self.secondParameterInput.setMinimum(1)
+        self.secondParameterInput.setMaximum(9999)
+        self.secondParameterInput.setObjectName("secondParameterInput")
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.ItemRole.FieldRole, self.secondParameterInput
+        )
+        self.verticalLayout.addWidget(self.targetGroupBox)
+        self.damageGroupBox = QtWidgets.QGroupBox(parent=Dialog)
+        self.damageGroupBox.setObjectName("damageGroupBox")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.damageGroupBox)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.formLayout_4 = QtWidgets.QFormLayout()
+        self.formLayout_4.setObjectName("formLayout_4")
+        self.baseDamageLabel = QtWidgets.QLabel(parent=self.damageGroupBox)
+        self.baseDamageLabel.setObjectName("baseDamageLabel")
+        self.formLayout_4.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.baseDamageLabel
+        )
+        self.baseDamageInput = QtWidgets.QLineEdit(parent=self.damageGroupBox)
+        self.baseDamageInput.setMaxLength(256)
+        self.baseDamageInput.setObjectName("baseDamageInput")
+        self.formLayout_4.setWidget(
+            0, QtWidgets.QFormLayout.ItemRole.FieldRole, self.baseDamageInput
+        )
+        self.scalingLabel = QtWidgets.QLabel(parent=self.damageGroupBox)
+        self.scalingLabel.setObjectName("scalingLabel")
+        self.formLayout_4.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.scalingLabel
+        )
+        self.abilityScoreScalingInput = QtWidgets.QComboBox(parent=self.damageGroupBox)
+        self.abilityScoreScalingInput.setObjectName("abilityScoreScalingInput")
+        self.abilityScoreScalingInput.addItem("")
+        self.abilityScoreScalingInput.addItem("")
+        self.abilityScoreScalingInput.addItem("")
+        self.abilityScoreScalingInput.addItem("")
+        self.abilityScoreScalingInput.addItem("")
+        self.abilityScoreScalingInput.addItem("")
+        self.abilityScoreScalingInput.addItem("")
+        self.formLayout_4.setWidget(
+            1, QtWidgets.QFormLayout.ItemRole.FieldRole, self.abilityScoreScalingInput
+        )
+        self.verticalLayout_3.addLayout(self.formLayout_4)
+        self.damageScalingCheck = QtWidgets.QCheckBox(parent=self.damageGroupBox)
+        self.damageScalingCheck.setObjectName("damageScalingCheck")
+        self.verticalLayout_3.addWidget(self.damageScalingCheck)
+        self.damageProficiencyCheck = QtWidgets.QCheckBox(parent=self.damageGroupBox)
+        self.damageProficiencyCheck.setObjectName("damageProficiencyCheck")
+        self.verticalLayout_3.addWidget(self.damageProficiencyCheck)
+        self.verticalLayout.addWidget(self.damageGroupBox)
+        self.statusText = QtWidgets.QLabel(parent=Dialog)
+        self.statusText.setObjectName("statusText")
+        self.verticalLayout.addWidget(self.statusText)
         self.dialogButtons = QtWidgets.QDialogButtonBox(parent=Dialog)
         self.dialogButtons.setStandardButtons(
             QtWidgets.QDialogButtonBox.StandardButton.Cancel
             | QtWidgets.QDialogButtonBox.StandardButton.Save
         )
-        self.dialogButtons.setCenterButtons(False)
         self.dialogButtons.setObjectName("dialogButtons")
         self.verticalLayout.addWidget(self.dialogButtons)
+        self.nameLabel.setBuddy(self.attackNameInput)
+        self.rangedLabel.setBuddy(self.attackTypeInput)
+        self.rangeLabel.setBuddy(self.attackRangeInput)
+        self.multihitLabel.setBuddy(self.multihitInput)
+        self.dcLabel.setBuddy(self.dcInput)
+        self.targetLabel.setBuddy(self.targetTypeInput)
+        self.baseDamageLabel.setBuddy(self.baseDamageInput)
+        self.scalingLabel.setBuddy(self.abilityScoreScalingInput)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -30,3 +190,46 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Saving throw based attack editor"))
+        self.nameLabel.setText(_translate("Dialog", "Attack &name"))
+        self.rangedLabel.setText(_translate("Dialog", "Attack &type"))
+        self.attackTypeInput.setItemText(0, _translate("Dialog", "Melee"))
+        self.attackTypeInput.setItemText(1, _translate("Dialog", "Ranged"))
+        self.rangeLabel.setText(_translate("Dialog", "&Range"))
+        self.attackRangeInput.setSuffix(_translate("Dialog", " ft."))
+        self.multihitLabel.setText(_translate("Dialog", "Number of &hits"))
+        self.dcLabel.setText(_translate("Dialog", "Save &DC"))
+        self.targetGroupBox.setTitle(_translate("Dialog", "Target"))
+        self.targetLabel.setText(_translate("Dialog", "Attack tar&get"))
+        self.targetTypeInput.setItemText(0, _translate("Dialog", "Single Target"))
+        self.targetTypeInput.setItemText(1, _translate("Dialog", "Cone"))
+        self.targetTypeInput.setItemText(2, _translate("Dialog", "Cube"))
+        self.targetTypeInput.setItemText(3, _translate("Dialog", "Square"))
+        self.targetTypeInput.setItemText(4, _translate("Dialog", "Cylinder"))
+        self.targetTypeInput.setItemText(5, _translate("Dialog", "Sphere"))
+        self.targetTypeInput.setItemText(6, _translate("Dialog", "Circle"))
+        self.targetTypeInput.setItemText(7, _translate("Dialog", "Line"))
+        self.firstParameterLabel.setText(_translate("Dialog", "First parameter"))
+        self.firstParameterInput.setSuffix(_translate("Dialog", " ft."))
+        self.secondParameterLabel.setText(_translate("Dialog", "Second parameter"))
+        self.secondParameterInput.setSuffix(_translate("Dialog", " ft."))
+        self.damageGroupBox.setTitle(_translate("Dialog", "Damage"))
+        self.baseDamageLabel.setText(_translate("Dialog", "&Base damage"))
+        self.scalingLabel.setText(_translate("Dialog", "Ability score &scaling"))
+        self.abilityScoreScalingInput.setItemText(0, _translate("Dialog", "None"))
+        self.abilityScoreScalingInput.setItemText(1, _translate("Dialog", "Strength"))
+        self.abilityScoreScalingInput.setItemText(2, _translate("Dialog", "Dexterity"))
+        self.abilityScoreScalingInput.setItemText(
+            3, _translate("Dialog", "Constitution")
+        )
+        self.abilityScoreScalingInput.setItemText(
+            4, _translate("Dialog", "Intelligence")
+        )
+        self.abilityScoreScalingInput.setItemText(5, _translate("Dialog", "Wisdom"))
+        self.abilityScoreScalingInput.setItemText(6, _translate("Dialog", "Charisma"))
+        self.damageScalingCheck.setText(
+            _translate("Dialog", "Add ability score &modifier to damage")
+        )
+        self.damageProficiencyCheck.setText(
+            _translate("Dialog", "Add &proficiency bonus to damage")
+        )
+        self.statusText.setText(_translate("Dialog", "status"))

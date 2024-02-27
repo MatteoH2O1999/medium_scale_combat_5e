@@ -1,5 +1,5 @@
 from PyQt6 import QtCore
-from typing import List, Union, Dict, Optional
+from typing import List, Union, Dict, Optional, Tuple
 
 import lib.targets as targets
 from lib.ability_scores import Scores, AbilityScores
@@ -9,7 +9,7 @@ from lib.stat_block import StatBlock
 
 class TargetModel:
     def __init__(self):
-        self.name: str = "single"
+        self.name: str = "single target"
         self.first_param: int = 1
         self.second_param: int = 1
 
@@ -18,14 +18,44 @@ class TargetModel:
         self.first_param = other.first_param
         self.second_param = other.second_param
 
+    def to_target(self) -> targets.Target:
+        if self.name == "single target":
+            return targets.SingleTarget()
+        if self.name == "cone":
+            return targets.Cone(self.first_param)
+        if self.name == "cube":
+            return targets.Cube(self.first_param)
+        if self.name == "square":
+            return targets.Square(self.first_param)
+        if self.name == "cylinder":
+            return targets.Cylinder(self.first_param)
+        if self.name == "sphere":
+            return targets.Sphere(self.first_param)
+        if self.name == "circle":
+            return targets.Circle(self.first_param)
+        if self.name == "line":
+            return targets.Line(self.first_param, self.second_param)
+        raise ValueError(f"Invalid target name: {self.name}")
+
+    def parameters(self) -> Tuple[Optional[str], Optional[str]]:
+        if self.name == "single target":
+            return None, None
+        if self.name in ["cone", "cube", "square"]:
+            return "Size", None
+        if self.name in ["cylinder", "sphere", "circle"]:
+            return "Radius", None
+        if self.name == "line":
+            return "Length", "Width"
+        raise ValueError(f"Invalid target name: {self.name}")
+
 
 class AttackRollModel:
     def __init__(self):
-        self.name: str = "attack name"
+        self.name: str = ""
         self.weapon_range: int = 5
         self.multiattack: int = 1
         self.target: TargetModel = TargetModel()
-        self.base_damage: str = "1"
+        self.base_damage: str = ""
         self.base_to_hit: int = 0
         self.ranged: bool = False
         self.ability_score_scaling: Optional[Scores] = None
@@ -52,11 +82,11 @@ class AttackRollModel:
 
 class SavingThrowModel:
     def __init__(self):
-        self.name: str = "attack name"
+        self.name: str = ""
         self.weapon_range: int = 5
         self.multiattack: int = 1
         self.target: TargetModel = TargetModel()
-        self.base_damage: str = "1"
+        self.base_damage: str = ""
         self.dc: int = 10
         self.ranged: bool = False
         self.ability_score_scaling: Optional[Scores] = None
@@ -147,10 +177,7 @@ def from_model(stat_block: StatBlockModel) -> StatBlock:
     )
     attacks = []
     for attack in stat_block.attacks:
-        if attack.target.name == "single":
-            target = targets.SingleTarget()
-        else:
-            raise ValueError(f"Invalid target name: {attack.target.name}")
+        target = attack.target.to_target()
         if isinstance(attack, AttackRollModel):
             attacks.append(
                 AttackRollAttack(
