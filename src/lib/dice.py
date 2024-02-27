@@ -68,7 +68,9 @@ def get_average_damage(dice_damage_string: str) -> tuple[float, float, float]:
     :return: The average value
     """
     if not dice_damage_string or not isinstance(dice_damage_string, str):
-        raise InvalidDamageExpressionError(f"Expected a non empty string")
+        raise InvalidDamageExpressionError(
+            f"Expected a non empty die expression string"
+        )
     dice_damage_string = dice_damage_string.lower().replace("-", "+-")
     if "*" in dice_damage_string or "/" in dice_damage_string:
         raise InvalidDamageExpressionError(
