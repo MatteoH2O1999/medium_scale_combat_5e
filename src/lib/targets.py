@@ -23,6 +23,10 @@ class SingleTarget(Target):
     def is_aoe(self) -> bool:
         return False
 
+    @property
+    def description(self) -> str:
+        return "one target"
+
     def __eq__(self, other) -> bool:
         if not isinstance(other, Target):
             return False
@@ -58,6 +62,10 @@ class Cone(AreaOfEffectTarget):
     def number_of_targets(self) -> int:
         return math.ceil(self._size / 10)
 
+    @property
+    def description(self) -> str:
+        return f"{self._size}-foot cone"
+
 
 class Cube(AreaOfEffectTarget):
     """
@@ -78,6 +86,10 @@ class Cube(AreaOfEffectTarget):
     @property
     def number_of_targets(self) -> int:
         return math.ceil(self._size / 5)
+
+    @property
+    def description(self) -> str:
+        return f"{self._size}-foot cube"
 
 
 class Square(AreaOfEffectTarget):
@@ -100,26 +112,40 @@ class Square(AreaOfEffectTarget):
     def number_of_targets(self) -> int:
         return math.ceil(self._size / 5)
 
+    @property
+    def description(self) -> str:
+        return f"{self._size}-foot square"
+
 
 class Cylinder(AreaOfEffectTarget):
     """
     Cylindrical area of effect
     """
 
-    def __init__(self, radius: int):
+    def __init__(self, radius: int, height: int):
         """
         Cylindrical area of effect of *radius*-foot radius
         :param radius: The radius of the cylinder of the area of effect in feet as written in the 5e description
+        :param height The height of the cylinder of the area of effect in feet as written in the 5e description
         """
         if radius < 1 or not isinstance(radius, int):
             raise InvalidTargetParamError(
                 f"radius should be a positive integer. Got {radius}."
             )
+        if height < 1 or not isinstance(height, int):
+            raise InvalidTargetParamError(
+                f"height should be a positive integer. Gor {height}."
+            )
         self._radius: int = radius
+        self._height: int = height
 
     @property
     def number_of_targets(self) -> int:
         return math.ceil(self._radius / 5)
+
+    @property
+    def description(self) -> str:
+        return f"{self._radius}-foot radius, {self._height}-foot-high cylinder"
 
 
 class Sphere(AreaOfEffectTarget):
@@ -142,6 +168,9 @@ class Sphere(AreaOfEffectTarget):
     def number_of_targets(self) -> int:
         return math.ceil(self._radius / 5)
 
+    def description(self) -> str:
+        return f"{self._radius}-foor-radius sphere"
+
 
 class Circle(AreaOfEffectTarget):
     """
@@ -162,6 +191,10 @@ class Circle(AreaOfEffectTarget):
     @property
     def number_of_targets(self) -> int:
         return math.ceil(self._radius / 5)
+
+    @property
+    def description(self) -> str:
+        return f"{self._radius}-foot-radius circle"
 
 
 class Line(AreaOfEffectTarget):
@@ -193,3 +226,7 @@ class Line(AreaOfEffectTarget):
     @property
     def number_of_targets(self) -> int:
         return math.ceil(self._area / 150)
+
+    @property
+    def description(self) -> str:
+        return f"{self._length}-foot line that is {self._width} foot wide"

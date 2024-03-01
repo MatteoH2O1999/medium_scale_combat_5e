@@ -24,6 +24,13 @@ class Target(ABC):
         If it is, number_of_targets is average rounded up.
         """
 
+    @property
+    @abstractmethod
+    def description(self) -> str:
+        """
+        The textual description of the target
+        """
+
 
 class CreatureAttack(ABC):
     """
@@ -300,7 +307,6 @@ class UnitStatBlock(ABC):
     def attacks(self) -> List[UnitAttack]:
         """
         The attacks the unit may perform
-        :return:
         """
 
     @property

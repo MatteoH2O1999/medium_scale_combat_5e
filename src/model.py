@@ -28,7 +28,7 @@ class TargetModel:
         if self.name == "square":
             return targets.Square(self.first_param)
         if self.name == "cylinder":
-            return targets.Cylinder(self.first_param)
+            return targets.Cylinder(self.first_param, self.second_param)
         if self.name == "sphere":
             return targets.Sphere(self.first_param)
         if self.name == "circle":
@@ -42,10 +42,12 @@ class TargetModel:
             return None, None
         if self.name in ["cone", "cube", "square"]:
             return "Size", None
-        if self.name in ["cylinder", "sphere", "circle"]:
+        if self.name in ["sphere", "circle"]:
             return "Radius", None
         if self.name == "line":
             return "Length", "Width"
+        if self.name == "cylinder":
+            return "Radius", "Height"
         raise ValueError(f"Invalid target name: {self.name}")
 
 
