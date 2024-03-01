@@ -519,16 +519,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.update_gui()
 
     def update_stat_block(self):
-        self.srdPreviewPlot.axes.clear()
-        self.mediumScalePreviewPlot.axes.clear()
         self.stat_block = from_model(self.model)
         self.medium_combat_stat_block = from_stat_block(self.stat_block)
-        datasheet_from_unit_stat_block(
-            self.medium_combat_stat_block, self.mediumScalePreviewPlot.axes
+        self.mediumScalePreviewPlot.update_preview(
+            datasheet_from_unit_stat_block(self.medium_combat_stat_block)
         )
-        datasheet_from_stat_block(self.stat_block, self.srdPreviewPlot.axes)
-        self.mediumScalePreviewPlot.draw()
-        self.srdPreviewPlot.draw()
+        self.srdPreviewPlot.update_preview(datasheet_from_stat_block(self.stat_block))
 
     def update_gui(self):
         self.editAttackButton.setEnabled(False)
