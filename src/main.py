@@ -450,6 +450,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         indexes = self.attacksListView.selectedIndexes()
         attacks_to_delete = [self.model.attacks[index.row()] for index in indexes]
         for attack in attacks_to_delete:
+            to_pop = []
+            for multiattack_name, multiattack in self.model.multiattacks.items():
+                if attack.name in multiattack:
+                    to_pop.append(multiattack_name)
+            for multiattack_name in to_pop:
+                self.model.multiattacks.pop(multiattack_name)
+                self.multiattacks_model.layoutChanged.emit()
+                self.multiattackListView.clearSelection()
             self.model.attacks.remove(attack)
         self.attacks_model.layoutChanged.emit()
         self.attacksListView.clearSelection()
