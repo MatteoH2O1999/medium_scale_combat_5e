@@ -298,7 +298,7 @@ class AttackRollAttack(Attack):
         if self._damage_proficiency:
             damage_string += f"+{stat_block.proficiency_modifier}"
 
-        average_total, average_dice, fixed = get_average_damage(self._base_damage)
+        average_total, average_dice, fixed = get_average_damage(damage_string)
 
         if self._ranged:
             return CreatureRangedAttack(
@@ -457,7 +457,7 @@ class SavingThrowAttack(Attack):
         if self._damage_proficiency:
             damage_string += f"+{stat_block.proficiency_modifier}"
 
-        average_total, average_dice, fixed = get_average_damage(self._base_damage)
+        average_total, average_dice, fixed = get_average_damage(damage_string)
 
         if self._ranged:
             return CreatureRangedAttack(
