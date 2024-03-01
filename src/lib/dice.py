@@ -71,7 +71,9 @@ def get_average_damage(dice_damage_string: str) -> tuple[float, float, float]:
         raise InvalidDamageExpressionError(
             f"Expected a non empty die expression string"
         )
-    dice_damage_string = dice_damage_string.lower().replace("-", "+-")
+    dice_damage_string = (
+        dice_damage_string.lower().replace("-", "+-").replace("++", "+")
+    )
     if "*" in dice_damage_string or "/" in dice_damage_string:
         raise InvalidDamageExpressionError(
             f"Expected only + and - signs in expression '{dice_damage_string}'"
