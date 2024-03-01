@@ -96,96 +96,84 @@ class AbilityScores:
     @property
     def strength(self) -> int:
         """
-        The strength ability score
-        :return: The strength ability score as an integer between 1 and 30
+        The strength ability score as an integer between 1 and 30
         """
         return self._str
 
     @property
     def dexterity(self) -> int:
         """
-        The dexterity ability score
-        :return: The dexterity ability score as an integer between 1 and 30
+        The dexterity ability score as an integer between 1 and 30
         """
         return self._dex
 
     @property
     def constitution(self) -> int:
         """
-        The constitution ability score
-        :return: The constitution ability score as an integer between 1 and 30
+        The constitution ability score as an integer between 1 and 30
         """
         return self._con
 
     @property
     def intelligence(self) -> int:
         """
-        The intelligence ability score
-        :return: The intelligence ability score as an integer between 1 and 30
+        The intelligence ability score as an integer between 1 and 30
         """
         return self._int
 
     @property
     def wisdom(self) -> int:
         """
-        The wisdom ability score
-        :return: The wisdom ability score as an integer between 1 and 30
+        The wisdom ability score as an integer between 1 and 30
         """
         return self._wis
 
     @property
     def charisma(self) -> int:
         """
-        The charisma ability score
-        :return: The charisma ability score as an integer between 1 and 30
+        The charisma ability score as an integer between 1 and 30
         """
         return self._cha
 
     @property
     def strength_modifier(self) -> int:
         """
-        The strength modifier
-        :return: The strength modifier as an integer between -5 and 10
+        The strength modifier as an integer between -5 and 10
         """
         return score_modifier(self._str)
 
     @property
     def dexterity_modifier(self) -> int:
         """
-        The dexterity modifier
-        :return: The dexterity modifier as an integer between -5 and 10
+        The dexterity modifier as an integer between -5 and 10
         """
         return score_modifier(self._dex)
 
     @property
     def constitution_modifier(self) -> int:
         """
-        The constitution modifier
-        :return: The constitution modifier as an integer between -5 and 10
+        The constitution modifier as an integer between -5 and 10
         """
         return score_modifier(self._con)
 
     @property
     def intelligence_modifier(self) -> int:
         """
-        The intelligence modifier
-        :return: The intelligence modifier as an integer between -5 and 10
+        The intelligence modifier as an integer between -5 and 10
         """
         return score_modifier(self._int)
 
     @property
     def wisdom_modifier(self) -> int:
         """
-        The wisdom modifier
-        :return: The wisdom modifier as an integer between -5 and 10
+        The wisdom modifier as an integer between -5 and 10
         """
         return score_modifier(self._wis)
 
     @property
     def charisma_modifier(self) -> int:
         """
-        The charisma modifier
-        :return: The charisma modifier as an integer between -5 and 10
+        The charisma modifier as an integer between -5 and 10
         """
         return score_modifier(self._cha)
 
