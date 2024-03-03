@@ -20,7 +20,7 @@ class Die:
         Die of specified sides
         :param sides: The number of sides of the die
         """
-        if sides < 1 or not isinstance(sides, int):
+        if not isinstance(sides, int) or sides < 1:
             raise InvalidDieParamError(
                 f"sides should be a positive integer. Got {sides}."
             )
@@ -59,6 +59,8 @@ def get_dice_average_value(sides: int) -> float:
     :param sides: The number of sides the die has
     :return: The die average value
     """
+    if not isinstance(sides, int) or sides < 1:
+        raise InvalidDieParamError(f"sides should be a positive integer. Got {sides}.")
     return (1 + sides) / 2
 
 
@@ -72,9 +74,11 @@ def get_average_damage(dice_damage_string: str) -> tuple[float, float, float]:
         raise InvalidDamageExpressionError(
             f"Expected a non empty die expression string"
         )
-    dice_damage_string = (
-        dice_damage_string.lower().replace("-", "+-").replace("++", "+")
+    dice_damage_string = "".join(
+        dice_damage_string.lower().replace("-", "+-").replace("++", "+").split(" ")
     )
+    if dice_damage_string.startswith("+"):
+        dice_damage_string = dice_damage_string[1:]
     if "*" in dice_damage_string or "/" in dice_damage_string:
         raise InvalidDamageExpressionError(
             f"Expected only + and - signs in expression '{dice_damage_string}'"
@@ -84,6 +88,13 @@ def get_average_damage(dice_damage_string: str) -> tuple[float, float, float]:
     total_damage = 0
     for part in dice_damage_string.split("+"):
         part = part.strip()
+        for p in part.split("d"):
+            try:
+                p = int(p)
+            except ValueError:
+                raise InvalidDamageExpressionError(
+                    f"Expected either a die expression or a number. Got {part}"
+                )
         if "d" in part:
             number_of_dice, sides_of_dice = part.split("d")
             number_of_dice = int(number_of_dice or "1")
@@ -103,6 +114,10 @@ def convert_to_d3_d6(damage: int) -> tuple[int, int, int]:
     :param damage: The average value to convert
     :return: The number of d6, the number of d3, the modifier
     """
+    if not isinstance(damage, int) or damage < 0:
+        raise InvalidDamageExpressionError(
+            f"damage should be a non-negative integer. Got {damage}."
+        )
     if damage < 2:
         return 0, 0, damage
     if damage == 2:
@@ -122,6 +137,16 @@ def convert_d6_d3_to_string(d6: int, d3: int, fixed: int) -> str:
     :param fixed: The fixed modifier
     :return: The die expression
     """
+    if not isinstance(d6, int) or d6 < 0:
+        raise InvalidDamageExpressionError(
+            f"d6 should be a non-negative integer. Got {d6}."
+        )
+    if not isinstance(d3, int) or d3 < 0:
+        raise InvalidDamageExpressionError(
+            f"d3 should be a non-negative integer. Got {d3}."
+        )
+    if not isinstance(fixed, int):
+        raise InvalidDamageExpressionError(f"fixed should be an integer. Got {fixed}.")
     ret = ""
     if d6:
         if d6 > 1:
