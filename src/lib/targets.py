@@ -148,7 +148,7 @@ class Cylinder(AreaOfEffectTarget):
 
     @property
     def description(self) -> str:
-        return f"{self._radius}-foot radius, {self._height}-foot-high cylinder"
+        return f"{self._radius}-foot-radius, {self._height}-foot-high cylinder"
 
 
 class Sphere(AreaOfEffectTarget):
@@ -171,8 +171,9 @@ class Sphere(AreaOfEffectTarget):
     def number_of_targets(self) -> int:
         return math.ceil(self._radius / 5)
 
+    @property
     def description(self) -> str:
-        return f"{self._radius}-foor-radius sphere"
+        return f"{self._radius}-foot-radius sphere"
 
 
 class Circle(AreaOfEffectTarget):
@@ -232,4 +233,4 @@ class Line(AreaOfEffectTarget):
 
     @property
     def description(self) -> str:
-        return f"{self._length}-foot line that is {self._width} foot wide"
+        return f"{self._length}-foot line that is {self._width} feet wide"
