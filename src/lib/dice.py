@@ -120,7 +120,7 @@ def convert_d6_d3_to_string(d6: int, d3: int, fixed: int) -> str:
     :param d6: The number of d6
     :param d3: The number of d3
     :param fixed: The fixed modifier
-    :return: The die exporession
+    :return: The die expression
     """
     ret = ""
     if d6:
