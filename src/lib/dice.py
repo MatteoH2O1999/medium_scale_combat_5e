@@ -110,7 +110,7 @@ def convert_to_d3_d6(damage: int) -> tuple[int, int, int]:
     if damage == 3:
         return 0, 1, 1
     d6 = math.floor(damage / D6.average_value)
-    fixed = math.floor(damage - (d6 * D6.average_value)) % 3
+    fixed = math.floor(damage - (d6 * D6.average_value))
     return d6, 0, fixed
 
 
@@ -128,13 +128,13 @@ def convert_d6_d3_to_string(d6: int, d3: int, fixed: int) -> str:
             ret += str(d6)
         ret += "D6"
     if d3:
-        if ret:
+        if ret and d3 > 0:
             ret += "+"
         if d3 > 1:
             ret += str(d3)
         ret += "D3"
     if fixed:
-        if ret:
+        if ret and fixed > 0:
             ret += "+"
         ret += str(fixed)
     if not ret:
