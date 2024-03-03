@@ -55,7 +55,7 @@ class Cone(AreaOfEffectTarget):
         Cone area of effect of *size* ft.
         :param size: The size of the cone in feet as written in the 5e description
         """
-        if size < 1 or not isinstance(size, int):
+        if not isinstance(size, int) or size < 1:
             raise InvalidTargetParamError(
                 f"size should be a positive integer. Got {size}."
             )
@@ -80,7 +80,7 @@ class Cube(AreaOfEffectTarget):
         Cube area of effect of *size* ft.
         :param size: The size of the cube in feet as written in the 5e description
         """
-        if size < 1 or not isinstance(size, int):
+        if not isinstance(size, int) or size < 1:
             raise InvalidTargetParamError(
                 f"size should be a positive integer. Got {size}."
             )
@@ -105,7 +105,7 @@ class Square(AreaOfEffectTarget):
         Square area of effect of *size* ft.
         :param size: The size of the square in feet as written in the 5e description
         """
-        if size < 1 or not isinstance(size, int):
+        if not isinstance(size, int) or size < 1:
             raise InvalidTargetParamError(
                 f"size should be a positive integer. Got {size}."
             )
@@ -131,11 +131,11 @@ class Cylinder(AreaOfEffectTarget):
         :param radius: The radius of the cylinder of the area of effect in feet as written in the 5e description
         :param height The height of the cylinder of the area of effect in feet as written in the 5e description
         """
-        if radius < 1 or not isinstance(radius, int):
+        if not isinstance(radius, int) or radius < 1:
             raise InvalidTargetParamError(
                 f"radius should be a positive integer. Got {radius}."
             )
-        if height < 1 or not isinstance(height, int):
+        if not isinstance(height, int) or height < 1:
             raise InvalidTargetParamError(
                 f"height should be a positive integer. Gor {height}."
             )
@@ -161,7 +161,7 @@ class Sphere(AreaOfEffectTarget):
         Spherical area of effect of *radius*-foot radius
         :param radius: The radius of the sphere in feet as written in the 5e description
         """
-        if radius < 1 or not isinstance(radius, int):
+        if not isinstance(radius, int) or radius < 1:
             raise InvalidTargetParamError(
                 f"radius should be a positive integer. Got {radius}."
             )
@@ -186,7 +186,7 @@ class Circle(AreaOfEffectTarget):
         Circular area of effect of *radius*foot radius
         :param radius: The radius of the sphere in feet as written in the 5e description
         """
-        if radius < 1 or not isinstance(radius, int):
+        if not isinstance(radius, int) or radius < 1:
             raise InvalidTargetParamError(
                 f"radius should be a positive integer. Got {radius}."
             )
@@ -212,11 +212,11 @@ class Line(AreaOfEffectTarget):
         :param length: The length of the line area of effect in feet as written in the 5e description
         :param width: The width of the line area of effect in feet as written in the 5e description. By default it is 5 feet.
         """
-        if length < 1 or not isinstance(length, int):
+        if not isinstance(length, int) or length < 1:
             raise InvalidTargetParamError(
                 f"length should be a positive integer. Got {length}."
             )
-        if width < 1 or not isinstance(width, int):
+        if not isinstance(width, int) or width < 1:
             raise InvalidTargetParamError(
                 f"width should be a positive integer. Got {width}."
             )
