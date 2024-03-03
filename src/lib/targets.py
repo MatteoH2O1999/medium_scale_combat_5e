@@ -2,11 +2,22 @@ import math
 
 from abc import ABC
 
-from .interfaces import Target
+from .interfaces import Target as TargetInterface
 
 
 class InvalidTargetParamError(ValueError):
     pass
+
+
+class Target(TargetInterface, ABC):
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Target):
+            return False
+        return (
+            self.number_of_targets == other.number_of_targets
+            and self.is_aoe == other.is_aoe
+            and self.description == other.description
+        )
 
 
 class SingleTarget(Target):
@@ -26,14 +37,6 @@ class SingleTarget(Target):
     @property
     def description(self) -> str:
         return "one target"
-
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, Target):
-            return False
-        return (
-            self.number_of_targets == other.number_of_targets
-            and self.is_aoe == other.is_aoe
-        )
 
 
 class AreaOfEffectTarget(Target, ABC):
