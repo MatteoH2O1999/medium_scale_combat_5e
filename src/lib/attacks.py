@@ -46,11 +46,11 @@ class CreatureAttack(CreatureAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"name value should be a non-empty string. Got {name}."
             )
-        if multiattack < 1 or not isinstance(multiattack, int):
+        if not isinstance(multiattack, int) or multiattack < 1:
             raise InvalidAttackParamError(
                 f"multiattack value should be an integer > 0. Got {multiattack}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range value should be a non-negative integer. Got {weapon_range}."
             )
@@ -60,14 +60,14 @@ class CreatureAttack(CreatureAttackInterface, ABC):
             )
         if not isinstance(to_hit, int):
             raise InvalidAttackParamError(f"to_hit should be an integer. Got {to_hit}.")
-        if total_average_damage < 0 or not isinstance(total_average_damage, float):
+        if not isinstance(total_average_damage, float) or total_average_damage < 0:
             raise InvalidAttackParamError(
                 f"total_average_damage should be a non-negative float. Got {total_average_damage}."
             )
         if (
-            dice_average_damage < 0
-            or not isinstance(dice_average_damage, float)
-            and dice_average_damage > 0
+            not isinstance(dice_average_damage, float)
+            or dice_average_damage < 0
+            or (isinstance(dice_average_damage, int) and dice_average_damage != 0)
         ):
             raise InvalidAttackParamError(
                 f"dice_average_damage should be a non-negative float. Got {dice_average_damage}."
