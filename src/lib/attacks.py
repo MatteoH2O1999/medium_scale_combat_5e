@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional
 
 from .ability_scores import Scores
-from .dice import get_average_damage
+from .dice import get_average_damage, InvalidDamageExpressionError
 from .interfaces import (
     Target,
     Attack,
@@ -177,11 +177,11 @@ class AttackRollAttack(Attack):
             raise InvalidAttackParamError(
                 f"name value sould be a non-empty string. Got {name}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range should be a non-negative integer. Got {weapon_range}."
             )
-        if multiattack < 1 or not isinstance(multiattack, int):
+        if not isinstance(multiattack, int) or multiattack < 1:
             raise InvalidAttackParamError(
                 f"multiattack should be a positive integer. Got {multiattack}."
             )
@@ -189,7 +189,12 @@ class AttackRollAttack(Attack):
             raise InvalidAttackParamError(
                 f"target should be an instance of Target. Got {type(target)}: {target}."
             )
-        damage, _, _ = get_average_damage(base_damage)
+        try:
+            damage, _, _ = get_average_damage(base_damage)
+        except InvalidDamageExpressionError:
+            raise InvalidAttackParamError(
+                f"base_damage should be a valid damage expression string. Got {base_damage}"
+            )
         if damage <= 0:
             raise InvalidAttackParamError(
                 f"base_damage should be an expression with and average damage > 0. Got {damage}"
@@ -230,8 +235,10 @@ class AttackRollAttack(Attack):
         return self._name
 
     def combine(self, other: Attack) -> Attack:
-        if not self.equals(other):
-            raise InvalidAttackParamError(f"Expected {self.name}. Got {other.name}")
+        if not self._equals(other):
+            raise InvalidAttackParamError(
+                f"Expected {self.name}. Got {getattr(other, 'name', other)}"
+            )
         assert isinstance(other, AttackRollAttack)
         return AttackRollAttack(
             self._name,
@@ -248,7 +255,7 @@ class AttackRollAttack(Attack):
             self._damage_proficiency,
         )
 
-    def equals(self, other: object) -> bool:
+    def _equals(self, other: object) -> bool:
         if not isinstance(other, AttackRollAttack):
             return False
         return (
@@ -358,11 +365,11 @@ class SavingThrowAttack(Attack):
             raise InvalidAttackParamError(
                 f"name value sould be a non-empty string. Got {name}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range should be a non-negative integer. Got {weapon_range}."
             )
-        if multiattack < 1 or not isinstance(multiattack, int):
+        if not isinstance(multiattack, int) or multiattack < 1:
             raise InvalidAttackParamError(
                 f"multiattack should be a positive integer. Got {multiattack}."
             )
@@ -370,7 +377,12 @@ class SavingThrowAttack(Attack):
             raise InvalidAttackParamError(
                 f"target should be an instance of Target. Got {type(target)}: {target}."
             )
-        damage, _, _ = get_average_damage(base_damage)
+        try:
+            damage, _, _ = get_average_damage(base_damage)
+        except InvalidDamageExpressionError:
+            raise InvalidAttackParamError(
+                f"base_damage should be a valid damage expression string. Got {base_damage}"
+            )
         if damage <= 0:
             raise InvalidAttackParamError(
                 f"base_damage should be an expression with and average damage > 0. Got {damage}"
@@ -393,8 +405,10 @@ class SavingThrowAttack(Attack):
         return self._name
 
     def combine(self, other: Attack) -> Attack:
-        if not self.equals(other):
-            raise InvalidAttackParamError(f"Expected {self.name}. Got {other.name}")
+        if not self._equals(other):
+            raise InvalidAttackParamError(
+                f"Expected {self.name}. Got {getattr(other, 'name', other)}"
+            )
         assert isinstance(other, SavingThrowAttack)
         return SavingThrowAttack(
             self._name,
@@ -425,7 +439,7 @@ class SavingThrowAttack(Attack):
             and self._damage_proficiency == other._damage_proficiency
         )
 
-    def equals(self, other: object) -> bool:
+    def _equals(self, other: object) -> bool:
         if not isinstance(other, SavingThrowAttack):
             return False
         return (
