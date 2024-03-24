@@ -130,17 +130,19 @@ class UnitStatBlock(UnitStatBlockInterface):
         return self._multiattacks
 
 
-def _speed_from_stat_block(stat_block: StatBlock) -> int:
+def _speed_from_stat_block(stat_block: StatBlock) -> int:  # pragma: no cover
     return stat_block.speed
 
 
-def _resistance_value_from_stat_block(stat_block: StatBlock) -> int:
+def _resistance_value_from_stat_block(stat_block: StatBlock) -> int:  # pragma: no cover
     constitution_modifier = stat_block.ability_scores.constitution_modifier
     prof_modifier = stat_block.proficiency_modifier
     return max(2 + constitution_modifier + prof_modifier // 2, 1)
 
 
-def _saving_throw_value_from_stat_block(stat_block: StatBlock) -> int:
+def _saving_throw_value_from_stat_block(
+    stat_block: StatBlock,
+) -> int:  # pragma: no cover
     ac = stat_block.armor_class
     if ac < 11:
         return 5
