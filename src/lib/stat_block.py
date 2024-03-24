@@ -47,15 +47,15 @@ class StatBlock(StatBlockInterface):
             )
         if not isinstance(prof, int):
             raise InvalidStatBlockParamError(f"prof should be an integer. Got{prof}.")
-        if ac < 1 or not isinstance(ac, int):
+        if not isinstance(ac, int) or ac < 1:
             raise InvalidStatBlockParamError(
                 f"ac should be a positive integer. Got {ac}."
             )
-        if hp < 1 or not isinstance(hp, int):
+        if not isinstance(hp, int) or hp < 1:
             raise InvalidStatBlockParamError(
                 f"hp should be a positive integer. Got {hp}."
             )
-        if speed < 0 or not isinstance(speed, int):
+        if not isinstance(speed, int) or speed < 0:
             raise InvalidStatBlockParamError(
                 f"speed should be a non-negative integer. Got {speed}."
             )
