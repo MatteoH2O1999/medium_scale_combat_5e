@@ -297,6 +297,13 @@ class UnitStatBlock(ABC):
 
     @property
     @abstractmethod
+    def invulnerable_saving_throw(self) -> Optional[int]:
+        """
+        The unit's invulnerable saving throw, if any.
+        """
+
+    @property
+    @abstractmethod
     def hit_points(self) -> int:
         """
         The unit's HP/creature value
