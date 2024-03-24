@@ -1,6 +1,7 @@
 import math
 
 from abc import ABC
+from typing import Optional
 
 from .attacks import InvalidAttackParamError
 from .dice import get_average_damage, convert_to_d3_d6, convert_d6_d3_to_string
@@ -13,7 +14,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         name: str,
         weapon_range: int,
         attacks: str,
-        skill: int,
+        skill: Optional[int],
         strength: int,
         ap: int,
         damage: str,
@@ -36,9 +37,9 @@ class UnitAttack(UnitAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"weapon_range value should be a non-negative integer. Got {weapon_range}."
             )
-        if not isinstance(skill, int) or skill < 2 or skill > 6:
+        if skill is not None and (not isinstance(skill, int) or skill < 2 or skill > 6):
             raise InvalidAttackParamError(
-                f"skill should be an integer between 2 and 6. Got {skill}."
+                f"skill should be an integer between 2 and 6 or None. Got {skill}."
             )
         if not isinstance(strength, int) and strength < 1:
             raise InvalidAttackParamError(
@@ -61,7 +62,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         self._name: str = name
         self._range: int = weapon_range
         self._attacks: str = attacks
-        self._skill: int = skill
+        self._skill: Optional[int] = skill
         self._strength: int = strength
         self._ap: int = ap
         self._damage: str = damage
@@ -79,7 +80,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         return self._attacks
 
     @property
-    def attack_skill(self) -> int:
+    def attack_skill(self) -> Optional[int]:
         return self._skill
 
     @property
@@ -119,7 +120,9 @@ def _range_from_attack(attack: CreatureAttack) -> int:
     return attack.range
 
 
-def _attack_skill_from_attack(attack: CreatureAttack) -> int:
+def _attack_skill_from_attack(
+    attack: CreatureAttack,
+) -> Optional[int]:  # pragma: no cover
     if attack.to_hit_bonus < 0:
         return 6
     elif attack.to_hit_bonus < 2:
