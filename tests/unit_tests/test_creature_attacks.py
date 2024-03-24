@@ -218,3 +218,23 @@ def test_invalid_fixed_damage_ranged_constructor():
         params = get_creature_attack_valid_params()
         params[7] = 3
         attacks.CreatureRangedAttack(*params)
+
+
+def test_eq():
+    params = get_creature_attack_valid_params()
+    melee_a = attacks.CreatureMeleeAttack(*params)
+    ranged_a = attacks.CreatureRangedAttack(*params)
+    melee_c = attacks.CreatureMeleeAttack(*params)
+    ranged_c = attacks.CreatureRangedAttack(*params)
+    params[0] = "other name"
+    melee_b = attacks.CreatureMeleeAttack(*params)
+    ranged_b = attacks.CreatureRangedAttack(*params)
+
+    assert melee_b != melee_a
+    assert melee_c != melee_b
+    assert melee_a == melee_c
+    assert melee_a != ranged_a
+    assert ranged_a != melee_a
+    assert ranged_b != ranged_a
+    assert ranged_c != ranged_b
+    assert ranged_a == ranged_c
