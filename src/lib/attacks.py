@@ -127,6 +127,20 @@ class CreatureMeleeAttack(CreatureAttack):
     def is_melee(self) -> bool:
         return True
 
+    def __eq__(self, other):
+        if not isinstance(other, CreatureMeleeAttack):
+            return False
+        return (
+            self._name == other._name
+            and self._multiattack == other._multiattack
+            and self._weapon_range == other._weapon_range
+            and self._target == other._target
+            and self._to_hit == other._to_hit
+            and self._total_average_damage == other._total_average_damage
+            and self._dice_average_damage == other._dice_average_damage
+            and self._fixed_damage == other._fixed_damage
+        )
+
 
 class CreatureRangedAttack(CreatureAttack):
     """
@@ -136,6 +150,20 @@ class CreatureRangedAttack(CreatureAttack):
     @property
     def is_melee(self) -> bool:
         return False
+
+    def __eq__(self, other):
+        if not isinstance(other, CreatureRangedAttack):
+            return False
+        return (
+            self._name == other._name
+            and self._multiattack == other._multiattack
+            and self._weapon_range == other._weapon_range
+            and self._target == other._target
+            and self._to_hit == other._to_hit
+            and self._total_average_damage == other._total_average_damage
+            and self._dice_average_damage == other._dice_average_damage
+            and self._fixed_damage == other._fixed_damage
+        )
 
 
 class AttackRollAttack(Attack):
