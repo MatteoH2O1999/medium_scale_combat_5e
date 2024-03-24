@@ -4,7 +4,12 @@ from abc import ABC
 from typing import Optional
 
 from .attacks import InvalidAttackParamError
-from .dice import get_average_damage, convert_to_d3_d6, convert_d6_d3_to_string
+from .dice import (
+    get_average_damage,
+    convert_to_d3_d6,
+    convert_d6_d3_to_string,
+    InvalidDamageExpressionError,
+)
 from .interfaces import UnitAttack as UnitAttackInterface, CreatureAttack
 
 
@@ -33,7 +38,7 @@ class UnitAttack(UnitAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"name value should be a non-empty string. Got {name}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range value should be a non-negative integer. Got {weapon_range}."
             )
@@ -41,7 +46,7 @@ class UnitAttack(UnitAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"skill should be an integer between 2 and 6 or None. Got {skill}."
             )
-        if not isinstance(strength, int) and strength < 1:
+        if not isinstance(strength, int) or strength < 1:
             raise InvalidAttackParamError(
                 f"strength should be a positive integer. Got {strength}."
             )
@@ -49,15 +54,25 @@ class UnitAttack(UnitAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"ap should be an integer. Got instance of {type(ap)}: {ap}."
             )
-        d, _, _ = get_average_damage(damage)
-        if d <= 0:
+        try:
+            d, _, _ = get_average_damage(damage)
+        except InvalidDamageExpressionError:
             raise InvalidAttackParamError(
-                f"damage should be an expression with and average damage > 0. Got {d}"
+                f"damage should be a valid die expression. Got {damage}"
             )
-        d, _, _ = get_average_damage(attacks)
         if d <= 0:
             raise InvalidAttackParamError(
-                f"attacks should be an expression with and average damage > 0. Got {d}"
+                f"damage should be an expression with an average damage > 0. Got {d}"
+            )
+        try:
+            d, _, _ = get_average_damage(attacks)
+        except InvalidDamageExpressionError:
+            raise InvalidAttackParamError(
+                f"attacks should be a valid die expression. Gor {attacks}"
+            )
+        if d <= 0:
+            raise InvalidAttackParamError(
+                f"attacks should be an expression with and average value > 0. Got {d}"
             )
         self._name: str = name
         self._range: int = weapon_range
