@@ -53,6 +53,7 @@ def test_get_average_damage():
     assert dice.get_average_damage("2 - 1") == (1.0, 0.0, 1.0)
     assert dice.get_average_damage("4d6 + 2d8 + 4 - 1 - 1d3") == (24.0, 21.0, 3.0)
     assert dice.get_average_damage("-4d6 + 1") == (-13.0, -14.0, 1.0)
+    assert dice.get_average_damage("d3 + 1") == (3.0, 2.0, 1.0)
 
 
 def test_convert_to_d3_d6_invalid():

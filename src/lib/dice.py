@@ -89,6 +89,8 @@ def get_average_damage(dice_damage_string: str) -> tuple[float, float, float]:
     for part in dice_damage_string.split("+"):
         part = part.strip()
         for p in part.split("d"):
+            if p == "":
+                p = "1"
             try:
                 p = int(p)
             except ValueError:
