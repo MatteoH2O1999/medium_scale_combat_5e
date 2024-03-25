@@ -65,7 +65,10 @@ class CreatureAttack(CreatureAttackInterface, ABC):
                 f"total_average_damage should be a non-negative float. Got {total_average_damage}."
             )
         if (
-            not isinstance(dice_average_damage, float)
+            (
+                not isinstance(dice_average_damage, float)
+                and not isinstance(dice_average_damage, int)
+            )
             or dice_average_damage < 0
             or (isinstance(dice_average_damage, int) and dice_average_damage != 0)
         ):
