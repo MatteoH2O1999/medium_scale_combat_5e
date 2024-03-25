@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional
 
 from .ability_scores import Scores
-from .dice import get_average_damage
+from .dice import get_average_damage, InvalidDamageExpressionError
 from .interfaces import (
     Target,
     Attack,
@@ -46,11 +46,11 @@ class CreatureAttack(CreatureAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"name value should be a non-empty string. Got {name}."
             )
-        if multiattack < 1 or not isinstance(multiattack, int):
+        if not isinstance(multiattack, int) or multiattack < 1:
             raise InvalidAttackParamError(
                 f"multiattack value should be an integer > 0. Got {multiattack}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range value should be a non-negative integer. Got {weapon_range}."
             )
@@ -60,14 +60,17 @@ class CreatureAttack(CreatureAttackInterface, ABC):
             )
         if not isinstance(to_hit, int):
             raise InvalidAttackParamError(f"to_hit should be an integer. Got {to_hit}.")
-        if total_average_damage < 0 or not isinstance(total_average_damage, float):
+        if not isinstance(total_average_damage, float) or total_average_damage < 0:
             raise InvalidAttackParamError(
                 f"total_average_damage should be a non-negative float. Got {total_average_damage}."
             )
         if (
-            dice_average_damage < 0
-            or not isinstance(dice_average_damage, float)
-            and dice_average_damage > 0
+            (
+                not isinstance(dice_average_damage, float)
+                and not isinstance(dice_average_damage, int)
+            )
+            or dice_average_damage < 0
+            or (isinstance(dice_average_damage, int) and dice_average_damage != 0)
         ):
             raise InvalidAttackParamError(
                 f"dice_average_damage should be a non-negative float. Got {dice_average_damage}."
@@ -127,6 +130,20 @@ class CreatureMeleeAttack(CreatureAttack):
     def is_melee(self) -> bool:
         return True
 
+    def __eq__(self, other):
+        if not isinstance(other, CreatureMeleeAttack):
+            return False
+        return (
+            self._name == other._name
+            and self._multiattack == other._multiattack
+            and self._weapon_range == other._weapon_range
+            and self._target == other._target
+            and self._to_hit == other._to_hit
+            and self._total_average_damage == other._total_average_damage
+            and self._dice_average_damage == other._dice_average_damage
+            and self._fixed_damage == other._fixed_damage
+        )
+
 
 class CreatureRangedAttack(CreatureAttack):
     """
@@ -136,6 +153,20 @@ class CreatureRangedAttack(CreatureAttack):
     @property
     def is_melee(self) -> bool:
         return False
+
+    def __eq__(self, other):
+        if not isinstance(other, CreatureRangedAttack):
+            return False
+        return (
+            self._name == other._name
+            and self._multiattack == other._multiattack
+            and self._weapon_range == other._weapon_range
+            and self._target == other._target
+            and self._to_hit == other._to_hit
+            and self._total_average_damage == other._total_average_damage
+            and self._dice_average_damage == other._dice_average_damage
+            and self._fixed_damage == other._fixed_damage
+        )
 
 
 class AttackRollAttack(Attack):
@@ -177,11 +208,11 @@ class AttackRollAttack(Attack):
             raise InvalidAttackParamError(
                 f"name value sould be a non-empty string. Got {name}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range should be a non-negative integer. Got {weapon_range}."
             )
-        if multiattack < 1 or not isinstance(multiattack, int):
+        if not isinstance(multiattack, int) or multiattack < 1:
             raise InvalidAttackParamError(
                 f"multiattack should be a positive integer. Got {multiattack}."
             )
@@ -189,7 +220,12 @@ class AttackRollAttack(Attack):
             raise InvalidAttackParamError(
                 f"target should be an instance of Target. Got {type(target)}: {target}."
             )
-        damage, _, _ = get_average_damage(base_damage)
+        try:
+            damage, _, _ = get_average_damage(base_damage)
+        except InvalidDamageExpressionError:
+            raise InvalidAttackParamError(
+                f"base_damage should be a valid damage expression string. Got {base_damage}"
+            )
         if damage <= 0:
             raise InvalidAttackParamError(
                 f"base_damage should be an expression with and average damage > 0. Got {damage}"
@@ -230,8 +266,10 @@ class AttackRollAttack(Attack):
         return self._name
 
     def combine(self, other: Attack) -> Attack:
-        if not self.equals(other):
-            raise InvalidAttackParamError(f"Expected {self.name}. Got {other.name}")
+        if not self._equals(other):
+            raise InvalidAttackParamError(
+                f"Expected {self.name}. Got {getattr(other, 'name', other)}"
+            )
         assert isinstance(other, AttackRollAttack)
         return AttackRollAttack(
             self._name,
@@ -248,7 +286,7 @@ class AttackRollAttack(Attack):
             self._damage_proficiency,
         )
 
-    def equals(self, other: object) -> bool:
+    def _equals(self, other: object) -> bool:
         if not isinstance(other, AttackRollAttack):
             return False
         return (
@@ -358,11 +396,11 @@ class SavingThrowAttack(Attack):
             raise InvalidAttackParamError(
                 f"name value sould be a non-empty string. Got {name}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range should be a non-negative integer. Got {weapon_range}."
             )
-        if multiattack < 1 or not isinstance(multiattack, int):
+        if not isinstance(multiattack, int) or multiattack < 1:
             raise InvalidAttackParamError(
                 f"multiattack should be a positive integer. Got {multiattack}."
             )
@@ -370,7 +408,12 @@ class SavingThrowAttack(Attack):
             raise InvalidAttackParamError(
                 f"target should be an instance of Target. Got {type(target)}: {target}."
             )
-        damage, _, _ = get_average_damage(base_damage)
+        try:
+            damage, _, _ = get_average_damage(base_damage)
+        except InvalidDamageExpressionError:
+            raise InvalidAttackParamError(
+                f"base_damage should be a valid damage expression string. Got {base_damage}"
+            )
         if damage <= 0:
             raise InvalidAttackParamError(
                 f"base_damage should be an expression with and average damage > 0. Got {damage}"
@@ -393,8 +436,10 @@ class SavingThrowAttack(Attack):
         return self._name
 
     def combine(self, other: Attack) -> Attack:
-        if not self.equals(other):
-            raise InvalidAttackParamError(f"Expected {self.name}. Got {other.name}")
+        if not self._equals(other):
+            raise InvalidAttackParamError(
+                f"Expected {self.name}. Got {getattr(other, 'name', other)}"
+            )
         assert isinstance(other, SavingThrowAttack)
         return SavingThrowAttack(
             self._name,
@@ -425,7 +470,7 @@ class SavingThrowAttack(Attack):
             and self._damage_proficiency == other._damage_proficiency
         )
 
-    def equals(self, other: object) -> bool:
+    def _equals(self, other: object) -> bool:
         if not isinstance(other, SavingThrowAttack):
             return False
         return (

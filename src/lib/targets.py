@@ -2,11 +2,22 @@ import math
 
 from abc import ABC
 
-from .interfaces import Target
+from .interfaces import Target as TargetInterface
 
 
 class InvalidTargetParamError(ValueError):
     pass
+
+
+class Target(TargetInterface, ABC):
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Target):
+            return False
+        return (
+            self.number_of_targets == other.number_of_targets
+            and self.is_aoe == other.is_aoe
+            and self.description == other.description
+        )
 
 
 class SingleTarget(Target):
@@ -27,14 +38,6 @@ class SingleTarget(Target):
     def description(self) -> str:
         return "one target"
 
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, Target):
-            return False
-        return (
-            self.number_of_targets == other.number_of_targets
-            and self.is_aoe == other.is_aoe
-        )
-
 
 class AreaOfEffectTarget(Target, ABC):
     @property
@@ -52,7 +55,7 @@ class Cone(AreaOfEffectTarget):
         Cone area of effect of *size* ft.
         :param size: The size of the cone in feet as written in the 5e description
         """
-        if size < 1 or not isinstance(size, int):
+        if not isinstance(size, int) or size < 1:
             raise InvalidTargetParamError(
                 f"size should be a positive integer. Got {size}."
             )
@@ -77,7 +80,7 @@ class Cube(AreaOfEffectTarget):
         Cube area of effect of *size* ft.
         :param size: The size of the cube in feet as written in the 5e description
         """
-        if size < 1 or not isinstance(size, int):
+        if not isinstance(size, int) or size < 1:
             raise InvalidTargetParamError(
                 f"size should be a positive integer. Got {size}."
             )
@@ -102,7 +105,7 @@ class Square(AreaOfEffectTarget):
         Square area of effect of *size* ft.
         :param size: The size of the square in feet as written in the 5e description
         """
-        if size < 1 or not isinstance(size, int):
+        if not isinstance(size, int) or size < 1:
             raise InvalidTargetParamError(
                 f"size should be a positive integer. Got {size}."
             )
@@ -128,11 +131,11 @@ class Cylinder(AreaOfEffectTarget):
         :param radius: The radius of the cylinder of the area of effect in feet as written in the 5e description
         :param height The height of the cylinder of the area of effect in feet as written in the 5e description
         """
-        if radius < 1 or not isinstance(radius, int):
+        if not isinstance(radius, int) or radius < 1:
             raise InvalidTargetParamError(
                 f"radius should be a positive integer. Got {radius}."
             )
-        if height < 1 or not isinstance(height, int):
+        if not isinstance(height, int) or height < 1:
             raise InvalidTargetParamError(
                 f"height should be a positive integer. Gor {height}."
             )
@@ -145,7 +148,7 @@ class Cylinder(AreaOfEffectTarget):
 
     @property
     def description(self) -> str:
-        return f"{self._radius}-foot radius, {self._height}-foot-high cylinder"
+        return f"{self._radius}-foot-radius, {self._height}-foot-high cylinder"
 
 
 class Sphere(AreaOfEffectTarget):
@@ -158,7 +161,7 @@ class Sphere(AreaOfEffectTarget):
         Spherical area of effect of *radius*-foot radius
         :param radius: The radius of the sphere in feet as written in the 5e description
         """
-        if radius < 1 or not isinstance(radius, int):
+        if not isinstance(radius, int) or radius < 1:
             raise InvalidTargetParamError(
                 f"radius should be a positive integer. Got {radius}."
             )
@@ -168,8 +171,9 @@ class Sphere(AreaOfEffectTarget):
     def number_of_targets(self) -> int:
         return math.ceil(self._radius / 5)
 
+    @property
     def description(self) -> str:
-        return f"{self._radius}-foor-radius sphere"
+        return f"{self._radius}-foot-radius sphere"
 
 
 class Circle(AreaOfEffectTarget):
@@ -182,7 +186,7 @@ class Circle(AreaOfEffectTarget):
         Circular area of effect of *radius*foot radius
         :param radius: The radius of the sphere in feet as written in the 5e description
         """
-        if radius < 1 or not isinstance(radius, int):
+        if not isinstance(radius, int) or radius < 1:
             raise InvalidTargetParamError(
                 f"radius should be a positive integer. Got {radius}."
             )
@@ -208,11 +212,11 @@ class Line(AreaOfEffectTarget):
         :param length: The length of the line area of effect in feet as written in the 5e description
         :param width: The width of the line area of effect in feet as written in the 5e description. By default it is 5 feet.
         """
-        if length < 1 or not isinstance(length, int):
+        if not isinstance(length, int) or length < 1:
             raise InvalidTargetParamError(
                 f"length should be a positive integer. Got {length}."
             )
-        if width < 1 or not isinstance(width, int):
+        if not isinstance(width, int) or width < 1:
             raise InvalidTargetParamError(
                 f"width should be a positive integer. Got {width}."
             )
@@ -229,4 +233,4 @@ class Line(AreaOfEffectTarget):
 
     @property
     def description(self) -> str:
-        return f"{self._length}-foot line that is {self._width} foot wide"
+        return f"{self._length}-foot line that is {self._width} feet wide"

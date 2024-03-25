@@ -1,9 +1,15 @@
 import math
 
 from abc import ABC
+from typing import Optional
 
 from .attacks import InvalidAttackParamError
-from .dice import get_average_damage, convert_to_d3_d6, convert_d6_d3_to_string
+from .dice import (
+    get_average_damage,
+    convert_to_d3_d6,
+    convert_d6_d3_to_string,
+    InvalidDamageExpressionError,
+)
 from .interfaces import UnitAttack as UnitAttackInterface, CreatureAttack
 
 
@@ -13,7 +19,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         name: str,
         weapon_range: int,
         attacks: str,
-        skill: int,
+        skill: Optional[int],
         strength: int,
         ap: int,
         damage: str,
@@ -32,15 +38,15 @@ class UnitAttack(UnitAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"name value should be a non-empty string. Got {name}."
             )
-        if weapon_range < 0 or not isinstance(weapon_range, int):
+        if not isinstance(weapon_range, int) or weapon_range < 0:
             raise InvalidAttackParamError(
                 f"weapon_range value should be a non-negative integer. Got {weapon_range}."
             )
-        if not isinstance(skill, int) or skill < 2 or skill > 6:
+        if skill is not None and (not isinstance(skill, int) or skill < 2 or skill > 6):
             raise InvalidAttackParamError(
-                f"skill should be an integer between 2 and 6. Got {skill}."
+                f"skill should be an integer between 2 and 6 or None. Got {skill}."
             )
-        if not isinstance(strength, int) and strength < 1:
+        if not isinstance(strength, int) or strength < 1:
             raise InvalidAttackParamError(
                 f"strength should be a positive integer. Got {strength}."
             )
@@ -48,20 +54,30 @@ class UnitAttack(UnitAttackInterface, ABC):
             raise InvalidAttackParamError(
                 f"ap should be an integer. Got instance of {type(ap)}: {ap}."
             )
-        d, _, _ = get_average_damage(damage)
-        if d <= 0:
+        try:
+            d, _, _ = get_average_damage(damage)
+        except InvalidDamageExpressionError:
             raise InvalidAttackParamError(
-                f"damage should be an expression with and average damage > 0. Got {d}"
+                f"damage should be a valid die expression. Got {damage}"
             )
-        d, _, _ = get_average_damage(attacks)
         if d <= 0:
             raise InvalidAttackParamError(
-                f"attacks should be an expression with and average damage > 0. Got {d}"
+                f"damage should be an expression with an average damage > 0. Got {d}"
+            )
+        try:
+            d, _, _ = get_average_damage(attacks)
+        except InvalidDamageExpressionError:
+            raise InvalidAttackParamError(
+                f"attacks should be a valid die expression. Gor {attacks}"
+            )
+        if d <= 0:
+            raise InvalidAttackParamError(
+                f"attacks should be an expression with and average value > 0. Got {d}"
             )
         self._name: str = name
         self._range: int = weapon_range
         self._attacks: str = attacks
-        self._skill: int = skill
+        self._skill: Optional[int] = skill
         self._strength: int = strength
         self._ap: int = ap
         self._damage: str = damage
@@ -79,7 +95,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         return self._attacks
 
     @property
-    def attack_skill(self) -> int:
+    def attack_skill(self) -> Optional[int]:
         return self._skill
 
     @property
@@ -115,11 +131,13 @@ class MeleeUnitAttack(UnitAttack):
         return True
 
 
-def _range_from_attack(attack: CreatureAttack) -> int:
+def _range_from_attack(attack: CreatureAttack) -> int:  # pragma: no cover
     return attack.range
 
 
-def _attack_skill_from_attack(attack: CreatureAttack) -> int:
+def _attack_skill_from_attack(
+    attack: CreatureAttack,
+) -> Optional[int]:  # pragma: no cover
     if attack.to_hit_bonus < 0:
         return 6
     elif attack.to_hit_bonus < 2:
@@ -131,7 +149,7 @@ def _attack_skill_from_attack(attack: CreatureAttack) -> int:
     return 2
 
 
-def _strength_value_from_attack(attack: CreatureAttack) -> int:
+def _strength_value_from_attack(attack: CreatureAttack) -> int:  # pragma: no cover
     return max(
         math.floor(math.sqrt(attack.total_average_damage + 1))
         + attack.to_hit_bonus
@@ -140,11 +158,13 @@ def _strength_value_from_attack(attack: CreatureAttack) -> int:
     )
 
 
-def _armor_penetration_value_from_attack(attack: CreatureAttack) -> int:
+def _armor_penetration_value_from_attack(
+    attack: CreatureAttack,
+) -> int:  # pragma: no cover
     return -math.ceil(abs(attack.total_average_damage // 20))
 
 
-def _damage_from_attack(attack: CreatureAttack) -> str:
+def _damage_from_attack(attack: CreatureAttack) -> str:  # pragma: no cover
     scaled_dice = math.ceil(attack.dice_average_damage / 20)
     scale_fixed = math.ceil(attack.total_average_damage / 20) - scaled_dice
     d6, d3, fixed = convert_to_d3_d6(scaled_dice)
@@ -152,7 +172,7 @@ def _damage_from_attack(attack: CreatureAttack) -> str:
     return convert_d6_d3_to_string(d6, d3, fixed)
 
 
-def _number_of_attacks_from_attack(attack: CreatureAttack) -> str:
+def _number_of_attacks_from_attack(attack: CreatureAttack) -> str:  # pragma: no cover
     attacks = attack.target.number_of_targets
     attacks *= attack.multiattack
     if attack.is_melee:

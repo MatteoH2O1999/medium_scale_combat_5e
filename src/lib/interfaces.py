@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from .ability_scores import AbilityScores
 
@@ -228,9 +228,9 @@ class UnitAttack(ABC):
 
     @property
     @abstractmethod
-    def attack_skill(self) -> int:
+    def attack_skill(self) -> Optional[int]:
         """
-        The attack's skill
+        The attack's skill. If `None`, the attack always hits (`N/A`)
         """
 
     @property
@@ -293,6 +293,13 @@ class UnitStatBlock(ABC):
     def saving_throw(self) -> int:
         """
         The unit's armor saving throw.
+        """
+
+    @property
+    @abstractmethod
+    def invulnerable_saving_throw(self) -> Optional[int]:
+        """
+        The unit's invulnerable saving throw, if any.
         """
 
     @property
