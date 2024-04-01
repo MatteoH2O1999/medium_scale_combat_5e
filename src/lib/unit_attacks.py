@@ -110,6 +110,20 @@ class UnitAttack(UnitAttackInterface, ABC):
     def damage(self) -> str:
         return self._damage
 
+    def __eq__(self, other):
+        if not isinstance(other, UnitAttackInterface):
+            return False
+        return (
+            self.name == other.name
+            and self.range == other.range
+            and self.attack_skill == other.attack_skill
+            and self.number_of_attacks == other.number_of_attacks
+            and self.strength == other.strength
+            and self.armor_penetration == other.armor_penetration
+            and self.damage == other.damage
+            and self.is_melee == other.is_melee
+        )
+
 
 class RangedUnitAttack(UnitAttack):
     """

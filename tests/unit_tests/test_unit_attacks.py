@@ -394,3 +394,17 @@ def test_from_creature_attack_ranged():
         == attacks._armor_penetration_value_from_attack(creature_attack)
     )
     assert unit_attack.strength == attacks._strength_value_from_attack(creature_attack)
+
+
+def test_eq():
+    a = attacks.MeleeUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1")
+    b = attacks.MeleeUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1")
+    c = attacks.RangedUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1")
+
+    assert a == b
+    assert a != c
+    assert b != c
+    assert a == a
+    assert b == a
+    assert c == c
+    assert a != "other"
