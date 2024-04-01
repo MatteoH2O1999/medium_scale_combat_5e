@@ -105,8 +105,8 @@ def get_average_damage(dice_damage_string: str) -> tuple[float, float, float]:
             dice_damage += damage
             total_damage += damage
         else:
-            fixed_damage += float(part)
-            total_damage += float(part)
+            fixed_damage += float(part or "0")
+            total_damage += float(part or "0")
     return total_damage, dice_damage, fixed_damage
 
 
