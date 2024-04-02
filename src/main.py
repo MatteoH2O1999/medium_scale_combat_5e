@@ -552,7 +552,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def update_model(self, name, value):
         self.model.__setattr__(name, value)
-        self.update_stat_block()
         self.update_gui()
 
     def reset(self):
@@ -568,7 +567,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.acBox.setValue(self.model.ac)
         self.speedBox.setValue(self.model.speed)
         self.profBox.setValue(self.model.proficiency)
-        self.update_stat_block()
         self.update_gui()
 
 
