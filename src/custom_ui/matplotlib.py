@@ -15,7 +15,7 @@ class MplCanvas(FigureCanvasQTAgg):
 
     def update_preview(self, fig: Figure):
         self.axes.clear()
-        fig.tight_layout(pad=0)
+        fig.subplots_adjust(0.0, 0.0, 1.0, 1.0)
         fig.canvas.draw()
         img = Image.frombytes(
             "RGB", fig.canvas.get_width_height(), fig.canvas.tostring_rgb()

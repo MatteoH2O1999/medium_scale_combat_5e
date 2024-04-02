@@ -3,6 +3,7 @@ import math
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import re
 
 from PIL import Image
 from matplotlib.axes import Axes
@@ -31,10 +32,24 @@ for font in font_files:
         font_manager.fontManager.ttflist.append(entry)
     else:
         font_manager.fontManager.addfont(font)
+plt.rcParams["mathtext.fontset"] = "custom"
+plt.rcParams["mathtext.default"] = "regular"
+plt.rcParams["mathtext.bfit"] = font_manager.FontProperties(
+    "Scala Sans", "italic", "normal", 700
+).get_fontconfig_pattern()
+plt.rcParams["mathtext.bf"] = font_manager.FontProperties(
+    "Scala Sans", "normal", "normal", 700
+).get_fontconfig_pattern()
+plt.rcParams["mathtext.it"] = font_manager.FontProperties(
+    "Scala Sans", "italic", "normal", 400
+).get_fontconfig_pattern()
+plt.rcParams["mathtext.rm"] = font_manager.FontProperties(
+    "Scala Sans", "normal", "normal", 400
+).get_fontconfig_pattern()
 
 LEFT_MARGIN = 100
 RED = "#58170d"
-SPACE_BETWEEN_ATTACKS = 100
+SPACE_BETWEEN_ATTACKS = 77
 
 
 def draw_separator_line(
@@ -84,6 +99,22 @@ def multiattack_string(creature_name: str, attack_list: List[CreatureAttack]) ->
     return f"{ret}."
 
 
+def capitalize_name(name: str) -> str:
+    ret = name.capitalize()
+    ret = capitalize_after_symbol(ret, " ")
+    ret = capitalize_after_symbol(ret, "(")
+    return ret
+
+
+def capitalize_after_symbol(string: str, symbol: str) -> str:
+    ret = list(string)
+    for match in re.finditer(re.escape(symbol), string):
+        index_to_change = match.end()
+        if index_to_change < len(string):
+            ret[index_to_change] = string[index_to_change].upper()
+    return "".join(ret)
+
+
 def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     figure = plt.figure(figsize=(15, 10))
     ax = figure.add_subplot(111)
@@ -97,6 +128,7 @@ def datasheet_from_stat_block(stat_block: StatBlock) -> plt.Figure:
     # Init stat block background
     figure = plt.figure(figsize=(10, 15))
     ax = figure.add_subplot(111)
+    figure.subplots_adjust(0.0, 0.0, 1.0, 1.0)
     ax.imshow(VERTICAL_PAPER)
     ax.set_axis_off()
     ax.set_xlim(0, 2000)
@@ -173,6 +205,9 @@ def datasheet_from_stat_block(stat_block: StatBlock) -> plt.Figure:
         fontweight="regular",
         fontsize=17,
     )
+
+    figure.draw_without_rendering()
+    avg_line_height = speed_text.get_window_extent().height
 
     draw_separator_line((LEFT_MARGIN, 550), 1800, 20, ax)
 
@@ -323,109 +358,67 @@ def datasheet_from_stat_block(stat_block: StatBlock) -> plt.Figure:
     draw_separator_line((LEFT_MARGIN, 900), 1800, 2, ax, "black", True)
 
     # Multiattacks
-    vertical_position = 975
+    vertical_position = 950
 
     multiattack_names = list(stat_block.multiattacks.keys())
     multiattack_names.sort()
     for multiattack_name in multiattack_names:
         multiattack = stat_block.multiattacks[multiattack_name]
-        name_text = ax.text(
+        multiattack_description = multiattack_string(
+            capitalize_name(stat_block.name.lower()),
+            multiattack,
+        )
+        multiattack_text = "\\ ".join(
+            f"$\\mathbfit{{{capitalize_name(multiattack_name)}.}}$".split(" ")
+        )
+        multiattack_text += multiattack_description
+        text = ax.text(
             LEFT_MARGIN,
             vertical_position,
-            f"{multiattack_name.capitalize()}.",
-            fontfamily="Scala Sans",
-            fontweight="bold",
-            fontstyle="italic",
-            fontsize=17,
-        )
-        ax.annotate(
-            multiattack_string(
-                " ".join(
-                    [part.capitalize() for part in stat_block.name.lower().split(" ")]
-                ),
-                multiattack,
-            ),
-            xycoords=name_text,
-            xy=(1, 0),
-            verticalalignment="bottom",
+            multiattack_text,
             fontfamily="Scala Sans",
             fontweight="regular",
             fontsize=17,
+            wrap=True,
+            verticalalignment="top",
         )
-        vertical_position += SPACE_BETWEEN_ATTACKS
+        figure.draw_without_rendering()
+        vertical_position += SPACE_BETWEEN_ATTACKS * max(
+            1, math.floor(text.get_window_extent().height / avg_line_height)
+        )
 
     # Attacks
     attack_names = list(stat_block.attacks.keys())
     attack_names.sort()
     for attack_name in attack_names:
         attack = stat_block.attacks[attack_name]
-        name_text = ax.text(
+        text_string = ""
+        text_string += "\\ ".join(
+            f"$\\mathbfit{{{capitalize_name(attack.name)}.}}$".split(" ")
+        )
+        text_string += f"$\\mathit{{{'Melee' if attack.is_melee else 'Ranged'} Weapon Attack:}}$".replace(
+            " ", "\\ "
+        )
+        text_string += f"{explicit_sign_str(attack.to_hit_bonus)} to hit, "
+        text_string += f"{'reach' if attack.is_melee else 'range'} {attack.range} ft., "
+        text_string += f"{attack.target.description}. "
+        text_string += (
+            f"$\\mathit{{Hit:}}${math.floor(attack.total_average_damage)} damage."
+        )
+        text = ax.text(
             LEFT_MARGIN,
             vertical_position,
-            f"{attack.name.capitalize()}. ",
-            fontfamily="Scala Sans",
-            fontweight="bold",
-            fontstyle="italic",
-            fontsize=17,
-        )
-        weapon_text = ax.annotate(
-            f"{'Melee' if attack.is_melee else 'Ranged'} Weapon Attack: ",
-            xycoords=name_text,
-            xy=(1, 0),
-            verticalalignment="bottom",
-            fontfamily="Scala Sans",
-            fontweight="regular",
-            fontstyle="italic",
-            fontsize=17,
-        )
-        to_hit_text = ax.annotate(
-            f"{explicit_sign_str(attack.to_hit_bonus)} to hit, ",
-            xycoords=weapon_text,
-            xy=(1, 0),
-            verticalalignment="bottom",
+            text_string,
             fontfamily="Scala Sans",
             fontweight="regular",
             fontsize=17,
+            wrap=True,
+            verticalalignment="top",
         )
-        range_text = ax.annotate(
-            f"{'reach' if attack.is_melee else 'range'} {attack.range} ft., ",
-            xycoords=to_hit_text,
-            xy=(1, 0),
-            verticalalignment="bottom",
-            fontfamily="Scala Sans",
-            fontweight="regular",
-            fontsize=17,
+        figure.draw_without_rendering()
+        vertical_position += SPACE_BETWEEN_ATTACKS * max(
+            1, math.floor(text.get_window_extent().height / avg_line_height)
         )
-        target_text = ax.annotate(
-            f"{attack.target.description}. ",
-            xycoords=range_text,
-            xy=(1, 0),
-            verticalalignment="bottom",
-            fontfamily="Scala Sans",
-            fontweight="regular",
-            fontsize=17,
-        )
-        hit_italic_text = ax.annotate(
-            "Hit: ",
-            xycoords=target_text,
-            xy=(1, 0),
-            verticalalignment="bottom",
-            fontfamily="Scala Sans",
-            fontweight="regular",
-            fontstyle="italic",
-            fontsize=17,
-        )
-        ax.annotate(
-            f"{math.floor(attack.total_average_damage)} damage.",
-            xycoords=hit_italic_text,
-            xy=(1, 0),
-            verticalalignment="bottom",
-            fontfamily="Scala Sans",
-            fontweight="regular",
-            fontsize=17,
-        )
-
-        vertical_position += SPACE_BETWEEN_ATTACKS
 
     return figure
 
@@ -434,7 +427,7 @@ def export_datasheet_from_unit_stat_block(
     stat_block: UnitStatBlock, path: pathlib.Path
 ) -> None:
     fig = datasheet_from_unit_stat_block(stat_block)
-    fig.tight_layout(pad=0)
+    fig.subplots_adjust(0.0, 0.0, 1.0, 1.0)
     fig.canvas.draw()
     img = Image.frombytes(
         "RGB", fig.canvas.get_width_height(), fig.canvas.tostring_rgb()
@@ -444,7 +437,7 @@ def export_datasheet_from_unit_stat_block(
 
 def export_datasheet_from_stat_block(stat_block: StatBlock, path: pathlib.Path) -> None:
     fig = datasheet_from_stat_block(stat_block)
-    fig.tight_layout(pad=0)
+    fig.subplots_adjust(0.0, 0.0, 1.0, 1.0)
     fig.canvas.draw()
     img = Image.frombytes(
         "RGB", fig.canvas.get_width_height(), fig.canvas.tostring_rgb()
