@@ -118,8 +118,11 @@ def capitalize_after_symbol(string: str, symbol: str) -> str:
 def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     figure = plt.figure(figsize=(15, 10))
     ax = figure.add_subplot(111)
+    figure.subplots_adjust(0.0, 0.0, 1.0, 1.0)
     ax.imshow(HORIZONTAL_PAPER)
     ax.set_axis_off()
+    ax.set_xlim(0, 3000)
+    ax.set_ylim(2000, 0)
 
     return figure
 
