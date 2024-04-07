@@ -1,3 +1,4 @@
+import pickle
 from PyQt6 import QtCore
 from typing import List, Union, Dict, Optional, Tuple
 
@@ -166,6 +167,20 @@ class StatBlockModel:
             for attack_name in multi:
                 attacks.append(attack_name)
             self.multiattacks[name] = attacks
+
+    @staticmethod
+    def load(path: str) -> "StatBlockModel":
+        with open(path, "rb") as file:
+            block = pickle.load(file)
+        if not isinstance(block, StatBlockModel):
+            raise RuntimeError(
+                f"Expected a StatBlockModel instance. Got a {type(block)} instance."
+            )
+        return block
+
+    def save(self, path: str):
+        with open(path, "wb") as file:
+            pickle.dump(self, file)
 
 
 def from_model(stat_block: StatBlockModel) -> StatBlock:
