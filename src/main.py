@@ -1,10 +1,17 @@
+import copy
 import sys
+import threading
+import time
+import pathlib
 from PyQt6 import QtWidgets
+from typing import Optional
 
 from custom_ui.datasheet import (
     datasheet_from_unit_stat_block,
     datasheet_from_stat_block,
+    export_datasheet_from_unit_stat_block,
 )
+from custom_ui.matplotlib import MplCanvas
 from lib.ability_scores import Scores
 from lib.unit_stat_block import from_stat_block
 from ui.edit_multiattack import Ui_Dialog as Ui_MultiattackDialog
@@ -20,6 +27,48 @@ from model import (
     SavingThrowModel,
     from_model,
 )
+
+
+class Renderer(threading.Thread):
+    def __init__(self, srd_canvas: MplCanvas, medium_scale_canvas: MplCanvas):
+        super().__init__()
+        self._srd = srd_canvas
+        self._medium_scale = medium_scale_canvas
+        self._model: Optional[StatBlockModel] = None
+        self._close = False
+        self._lock = threading.Lock()
+
+    def run(self):
+        with self._lock:
+            current_close = self._close
+        while not current_close:
+            current_model = None
+
+            with self._lock:
+                if self._model:
+                    current_model = copy.deepcopy(self._model)
+                    self._model = None
+
+            if current_model:
+                srd_block = from_model(current_model)
+                medium_block = from_stat_block(srd_block)
+                self._srd.update_preview(datasheet_from_stat_block(srd_block))
+                self._medium_scale.update_preview(
+                    datasheet_from_unit_stat_block(medium_block)
+                )
+
+            with self._lock:
+                current_close = self._close
+
+            time.sleep(0.5)
+
+    def queue_model(self, model: StatBlockModel):
+        with self._lock:
+            self._model = copy.deepcopy(model)
+
+    def quit(self):
+        with self._lock:
+            self._close = True
 
 
 class AttackRollDialog(QtWidgets.QDialog, Ui_AttackRollDialog):
@@ -397,13 +446,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
+        self.file = ""
         self.model = StatBlockModel()
         self.attacks_model = AttackListModel(self.model)
         self.multiattacks_model = MultiattackListModel(self.model)
         self.attacksListView.setModel(self.attacks_model)
         self.multiattackListView.setModel(self.multiattacks_model)
-        self.stat_block = from_model(self.model)
-        self.medium_combat_stat_block = from_stat_block(self.stat_block)
+        self.srdPreviewPlot.update_preview(
+            datasheet_from_stat_block(from_model(self.model))
+        )
+        self.mediumScalePreviewPlot.update_preview(
+            datasheet_from_unit_stat_block(from_stat_block(from_model(self.model)))
+        )
+        self.renderer = Renderer(self.srdPreviewPlot, self.mediumScalePreviewPlot)
+        self.renderer.start()
         self.update_gui()
 
         self.strBox.valueChanged.connect(lambda x: self.update_model("str", x))
@@ -433,7 +489,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.update_gui
         )
 
-        self.actionNew.triggered.connect(self.reset)
+        self.actionNew.triggered.connect(lambda: self.reset(True))
+        self.actionExit.triggered.connect(self.exit)
+        self.actionOpen.triggered.connect(self.open)
+        self.actionSave.triggered.connect(self.save)
+        self.actionSave_as.triggered.connect(self.save_as)
+        self.actionExportDatasheet.triggered.connect(self.export)
 
     def delete_multiattack(self):
         indexes = self.multiattackListView.selectedIndexes()
@@ -527,12 +588,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.update_gui()
 
     def update_stat_block(self):
-        self.stat_block = from_model(self.model)
-        self.medium_combat_stat_block = from_stat_block(self.stat_block)
-        self.mediumScalePreviewPlot.update_preview(
-            datasheet_from_unit_stat_block(self.medium_combat_stat_block)
-        )
-        self.srdPreviewPlot.update_preview(datasheet_from_stat_block(self.stat_block))
+        self.renderer.queue_model(self.model)
 
     def update_gui(self):
         self.editAttackButton.setEnabled(False)
@@ -548,31 +604,96 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self.multiattackListView.selectedIndexes():
                 self.editMultiattackButton.setEnabled(True)
                 self.deleteMultiattackButton.setEnabled(True)
+        self.multiattacks_model.layoutChanged.emit()
+        self.attacks_model.layoutChanged.emit()
         self.update_stat_block()
 
     def update_model(self, name, value):
         self.model.__setattr__(name, value)
         self.update_gui()
 
-    def reset(self):
-        self.model.reset()
+    def reset(self, reset: bool = True):
+        if reset:
+            self.file = ""
+            self.model.reset()
+            self.nameInput.clear()
+        else:
+            self.nameInput.setText(self.model.name)
         self.strBox.setValue(self.model.str)
         self.dexBox.setValue(self.model.dex)
         self.conBox.setValue(self.model.con)
         self.intBox.setValue(self.model.int)
         self.wisBox.setValue(self.model.wis)
         self.chaBox.setValue(self.model.cha)
-        self.nameInput.clear()
         self.hpBox.setValue(self.model.hp)
         self.acBox.setValue(self.model.ac)
         self.speedBox.setValue(self.model.speed)
         self.profBox.setValue(self.model.proficiency)
         self.update_gui()
 
+    def save_as(self):
+        dialog = QtWidgets.QFileDialog()
+        dialog.setFileMode(QtWidgets.QFileDialog.FileMode.AnyFile)
+        dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptSave)
+        dialog.setNameFilter("5e stat block (*.5eblock)")
+        dialog.selectFile(f"{self.model.name}.5eblock")
+        if dialog.exec():
+            files = dialog.selectedFiles()
+            if not len(files) == 1:
+                raise RuntimeError
+            file = files[0]
+            if not file.endswith(".5eblock"):
+                file += ".5eblock"
+            self.file = file
+            self.model.save(self.file)
+
+    def save(self):
+        if not self.file:
+            return self.save_as()
+        self.model.save(self.file)
+
+    def open(self):
+        dialog = QtWidgets.QFileDialog()
+        dialog.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile)
+        dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptOpen)
+        dialog.setNameFilter("5e stat block (*.5eblock)")
+        dialog.selectFile(f"{self.model.name}.5eblock")
+        if dialog.exec():
+            files = dialog.selectedFiles()
+            if not len(files) == 1:
+                raise RuntimeError
+            self.file = files[0]
+            new_model = StatBlockModel.load(self.file)
+            self.model.copy_from(new_model)
+            self.reset(False)
+
+    def export(self):
+        dialog = QtWidgets.QFileDialog()
+        dialog.setFileMode(QtWidgets.QFileDialog.FileMode.AnyFile)
+        dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptSave)
+        dialog.setNameFilter("Images (*.png)")
+        dialog.selectFile(f"{self.model.name}.png")
+        if dialog.exec():
+            files = dialog.selectedFiles()
+            if not len(files) == 1:
+                raise RuntimeError
+            file = files[0]
+            if not file.endswith(".png"):
+                file += ".png"
+            filepath = pathlib.Path(file)
+            export_datasheet_from_unit_stat_block(
+                from_stat_block(from_model(self.model)), filepath
+            )
+
+    def exit(self):
+        self.renderer.quit()
+        self.renderer.join()
+        sys.exit(0)
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
+    app.lastWindowClosed.connect(window.exit)
     window.show()
-    window.actionExit.triggered.connect(lambda: sys.exit(0))
     app.exec()
