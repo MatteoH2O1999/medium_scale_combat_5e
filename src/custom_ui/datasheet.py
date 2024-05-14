@@ -149,13 +149,13 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     # Creature name
     name = " ".join([part.capitalize() for part in stat_block.name.split(" ")])
     ax.text(
-        LEFT_MARGIN + 50,
+        LEFT_MARGIN,
         150,
         name,
         color="w",
         fontfamily="Spectral SC",
         fontweight="bold",
-        fontsize=30,
+        fontsize=36,
         fontvariant="small-caps",
     )
 
@@ -164,7 +164,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     height = 225
     box_half_size = 60
     box_offset = 80
-    start = LEFT_MARGIN + 70 + box_half_size
+    start = LEFT_MARGIN + 20 + box_half_size
     font_size = 25
     stats = [
         ("Spd", str(stat_block.speed)),
@@ -233,6 +233,98 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             )
 
         x += interval
+
+    ranged = any([not a.is_melee for a in stat_block.attacks])
+
+    if ranged:
+        # Ranged weapon title
+        vertical_position = 650
+        interval = 300
+        font_size = 20
+
+        range_position = 1200
+        attacks_position = range_position + interval
+        skill_position = attacks_position + interval
+        strength_position = skill_position + interval
+        ap_position = strength_position + interval
+        damage_position = ap_position + interval
+
+        attacks_text = ax.text(
+            LEFT_MARGIN,
+            vertical_position,
+            "R",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=28,
+        )
+        ax.annotate(
+            "ANGED WEAPONS",
+            xycoords=attacks_text,
+            xy=(1, 0),
+            verticalalignment="bottom",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=24,
+        )
+
+        ax.text(
+            range_position,
+            vertical_position,
+            "Range",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            attacks_position,
+            vertical_position,
+            "Attacks",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            skill_position,
+            vertical_position,
+            "Skill",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            strength_position,
+            vertical_position,
+            "Str",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            ap_position,
+            vertical_position,
+            "AP",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            damage_position,
+            vertical_position,
+            "Dmg",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+
+        draw_separator_line((LEFT_MARGIN, 675), 2800, 2, ax, RED, True)
+
+        # Ranged weapons
 
     return figure
 
