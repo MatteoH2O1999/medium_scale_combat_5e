@@ -49,6 +49,7 @@ plt.rcParams["mathtext.rm"] = font_manager.FontProperties(
 
 LEFT_MARGIN = 100
 RED = "#58170d"
+PAPER_COLOR = "#eee7d7"
 SPACE_BETWEEN_ATTACKS = 77
 
 
@@ -115,6 +116,18 @@ def capitalize_after_symbol(string: str, symbol: str) -> str:
     return "".join(ret)
 
 
+def square(x: int, y: int, half_size: int) -> List[Tuple[int, int]]:
+    round_size = 20
+    return [
+        (x - half_size + round_size, y - half_size),
+        (x - half_size, y - half_size + round_size),
+        (x - half_size, y + half_size),
+        (x + half_size - round_size, y + half_size),
+        (x + half_size, y + half_size - round_size),
+        (x + half_size, y - half_size),
+    ]
+
+
 def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     figure = plt.figure(figsize=(15, 10))
     ax = figure.add_subplot(111)
@@ -123,6 +136,103 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     ax.set_axis_off()
     ax.set_xlim(0, 3000)
     ax.set_ylim(2000, 0)
+
+    # Title background
+    title_box_height = 550
+
+    points = [(0, 0), (3000, 0), (3000, title_box_height), (0, title_box_height)]
+    x = [p[0] for p in points]
+    y = [p[1] for p in points]
+
+    ax.fill(x, y, RED)
+
+    # Creature name
+    name = " ".join([part.capitalize() for part in stat_block.name.split(" ")])
+    ax.text(
+        LEFT_MARGIN + 50,
+        150,
+        name,
+        color="w",
+        fontfamily="Spectral SC",
+        fontweight="bold",
+        fontsize=30,
+        fontvariant="small-caps",
+    )
+
+    # Stats labels and boxes
+    interval = 175
+    height = 225
+    box_half_size = 60
+    box_offset = 80
+    start = LEFT_MARGIN + 70 + box_half_size
+    font_size = 25
+    stats = [
+        ("Spd", str(stat_block.speed)),
+        ("Def", str(stat_block.resistance)),
+        ("Save", f"{stat_block.saving_throw}+"),
+        ("HP", str(stat_block.hit_points)),
+    ]
+
+    x = start
+    y = height
+    box_y = y + box_offset
+    for stat, value in stats:
+        points = square(x, box_y, box_half_size)
+        x_points = [p[0] for p in points]
+        y_points = [p[1] for p in points]
+
+        ax.text(
+            x,
+            y,
+            stat,
+            color="w",
+            fontfamily="Scala Sans",
+            fontweight="bold",
+            fontsize=17,
+            horizontalalignment="center",
+        )
+        ax.fill(x_points, y_points, PAPER_COLOR)
+        ax.text(
+            x,
+            box_y,
+            value,
+            color=RED,
+            fontfamily="Scala Sans",
+            fontweight="bold",
+            fontsize=font_size,
+            horizontalalignment="center",
+            verticalalignment="center",
+        )
+
+        if stat == "Save" and stat_block.invulnerable_saving_throw is not None:
+            invul_y = box_y + 2 * box_half_size + 30
+            points = square(x, invul_y, box_half_size)
+            x_points = [p[0] for p in points]
+            y_points = [p[1] for p in points]
+            ax.fill(x_points, y_points, PAPER_COLOR)
+            ax.text(
+                x,
+                invul_y,
+                f"{stat_block.invulnerable_saving_throw}+",
+                color=RED,
+                fontfamily="Scala Sans",
+                fontweight="bold",
+                fontsize=font_size,
+                horizontalalignment="center",
+                verticalalignment="center",
+            )
+            ax.text(
+                x + box_half_size + 20,
+                invul_y,
+                "Invulnerable Save",
+                color="w",
+                fontfamily="Scala Sans",
+                fontweight="bold",
+                fontsize=17,
+                verticalalignment="center",
+            )
+
+        x += interval
 
     return figure
 
