@@ -128,6 +128,14 @@ def square(x: int, y: int, half_size: int) -> List[Tuple[int, int]]:
     ]
 
 
+def dotted_line(x: float, y: float, length: int, ax: Axes):
+    points = [(x, y), (x + length, y)]
+    x = [p[0] for p in points]
+    y = [p[1] for p in points]
+
+    ax.plot(x, y, linestyle=(0, (1, 4)), linewidth=1, color=RED)
+
+
 def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     figure = plt.figure(figsize=(15, 10))
     ax = figure.add_subplot(111)
@@ -254,7 +262,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             vertical_position,
             "R",
             fontfamily="Spectral SC",
-            fontweight="regular",
+            fontweight="bold",
             fontsize=28,
         )
         ax.annotate(
@@ -263,7 +271,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             xy=(1, 0),
             verticalalignment="bottom",
             fontfamily="Spectral SC",
-            fontweight="regular",
+            fontweight="bold",
             fontsize=24,
         )
 
@@ -297,7 +305,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
         ax.text(
             strength_position,
             vertical_position,
-            "Str",
+            "Strength",
             fontfamily="Spectral SC",
             fontweight="regular",
             fontsize=font_size,
@@ -315,7 +323,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
         ax.text(
             damage_position,
             vertical_position,
-            "Dmg",
+            "Damage",
             fontfamily="Spectral SC",
             fontweight="regular",
             fontsize=font_size,
@@ -325,6 +333,105 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
         draw_separator_line((LEFT_MARGIN, 675), 2800, 2, ax, RED, True)
 
         # Ranged weapons
+
+        y = 715
+        name_x = LEFT_MARGIN + 20
+        cell_height = 75
+        half_cell_height = cell_height / 2
+        data_font_size = 17
+        darken = False
+
+        for ranged_attack in stat_block.attacks:
+            if ranged_attack.is_melee:
+                continue
+            if darken:
+                points = [
+                    (LEFT_MARGIN, y - half_cell_height),
+                    (LEFT_MARGIN + 2800, y - half_cell_height),
+                    (LEFT_MARGIN + 2800, y + half_cell_height),
+                    (LEFT_MARGIN, y + half_cell_height)
+                ]
+
+                x_points = [p[0] for p in points]
+                y_points = [p[1] for p in points]
+                ax.fill(x_points, y_points, f"{RED}1A")
+            else:
+                darken = True
+
+            ax.text(
+                name_x,
+                y,
+                ranged_attack.name,
+                fontfamily="Scala Sans",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center"
+            )
+
+            ax.text(
+                range_position,
+                y,
+                f"{ranged_attack.range} ft.",
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center"
+            )
+            ax.text(
+                attacks_position,
+                y,
+                ranged_attack.number_of_attacks,
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center"
+            )
+            ax.text(
+                skill_position,
+                y,
+                f"{ranged_attack.attack_skill}+" if ranged_attack.attack_skill is not None else "N/A",
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center"
+            )
+            ax.text(
+                strength_position,
+                y,
+                str(ranged_attack.strength),
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center"
+            )
+            ax.text(
+                ap_position,
+                y,
+                str(ranged_attack.armor_penetration),
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center"
+            )
+            ax.text(
+                damage_position,
+                y,
+                ranged_attack.damage,
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center"
+            )
+
+            dotted_line(LEFT_MARGIN, y + half_cell_height, 2800, ax)
+
+            y += cell_height
 
     return figure
 
