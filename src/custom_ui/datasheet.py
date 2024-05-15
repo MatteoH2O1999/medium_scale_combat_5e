@@ -349,7 +349,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                     (LEFT_MARGIN, y - half_cell_height),
                     (LEFT_MARGIN + 2800, y - half_cell_height),
                     (LEFT_MARGIN + 2800, y + half_cell_height),
-                    (LEFT_MARGIN, y + half_cell_height)
+                    (LEFT_MARGIN, y + half_cell_height),
                 ]
 
                 x_points = [p[0] for p in points]
@@ -365,7 +365,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 fontfamily="Scala Sans",
                 fontweight="regular",
                 fontsize=data_font_size,
-                verticalalignment="center"
+                verticalalignment="center",
             )
 
             ax.text(
@@ -376,7 +376,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 fontweight="regular",
                 fontsize=data_font_size,
                 verticalalignment="center",
-                horizontalalignment="center"
+                horizontalalignment="center",
             )
             ax.text(
                 attacks_position,
@@ -386,17 +386,21 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 fontweight="regular",
                 fontsize=data_font_size,
                 verticalalignment="center",
-                horizontalalignment="center"
+                horizontalalignment="center",
             )
             ax.text(
                 skill_position,
                 y,
-                f"{ranged_attack.attack_skill}+" if ranged_attack.attack_skill is not None else "N/A",
+                (
+                    f"{ranged_attack.attack_skill}+"
+                    if ranged_attack.attack_skill is not None
+                    else "N/A"
+                ),
                 fontfamily="Spectral SC",
                 fontweight="regular",
                 fontsize=data_font_size,
                 verticalalignment="center",
-                horizontalalignment="center"
+                horizontalalignment="center",
             )
             ax.text(
                 strength_position,
@@ -406,7 +410,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 fontweight="regular",
                 fontsize=data_font_size,
                 verticalalignment="center",
-                horizontalalignment="center"
+                horizontalalignment="center",
             )
             ax.text(
                 ap_position,
@@ -416,7 +420,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 fontweight="regular",
                 fontsize=data_font_size,
                 verticalalignment="center",
-                horizontalalignment="center"
+                horizontalalignment="center",
             )
             ax.text(
                 damage_position,
@@ -426,12 +430,18 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 fontweight="regular",
                 fontsize=data_font_size,
                 verticalalignment="center",
-                horizontalalignment="center"
+                horizontalalignment="center",
             )
 
             dotted_line(LEFT_MARGIN, y + half_cell_height, 2800, ax)
 
             y += cell_height
+
+        # Ranged multiattacks
+
+        for multiattack_name, attack_list in stat_block.multiattacks.items():
+            if attack_list[0].is_melee:
+                continue
 
     return figure
 
