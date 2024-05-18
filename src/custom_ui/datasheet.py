@@ -49,6 +49,7 @@ plt.rcParams["mathtext.rm"] = font_manager.FontProperties(
 
 LEFT_MARGIN = 100
 RED = "#58170d"
+DARKER_CELL = f"{RED}1A"
 PAPER_COLOR = "#eee7d7"
 SPACE_BETWEEN_ATTACKS = 77
 
@@ -354,9 +355,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
 
                 x_points = [p[0] for p in points]
                 y_points = [p[1] for p in points]
-                ax.fill(x_points, y_points, f"{RED}1A")
-            else:
-                darken = True
+                ax.fill(x_points, y_points, DARKER_CELL)
 
             ax.text(
                 name_x,
@@ -436,12 +435,108 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             dotted_line(LEFT_MARGIN, y + half_cell_height, 2800, ax)
 
             y += cell_height
+            darken = not darken
 
         # Ranged multiattacks
 
         for multiattack_name, attack_list in stat_block.multiattacks.items():
             if attack_list[0].is_melee:
                 continue
+
+            # Ranged mumultiattack single attack
+            for attack in attack_list:
+                if darken:
+                    points = [
+                        (LEFT_MARGIN, y - half_cell_height),
+                        (LEFT_MARGIN + 2800, y - half_cell_height),
+                        (LEFT_MARGIN + 2800, y + half_cell_height),
+                        (LEFT_MARGIN, y + half_cell_height),
+                    ]
+
+                    x_points = [p[0] for p in points]
+                    y_points = [p[1] for p in points]
+                    ax.fill(x_points, y_points, DARKER_CELL)
+
+                ax.text(
+                    name_x,
+                    y,
+                    f"{multiattack_name} - {attack.name}",
+                    fontfamily="Scala Sans",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                )
+
+                ax.text(
+                    range_position,
+                    y,
+                    f"{attack.range} ft.",
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    attacks_position,
+                    y,
+                    attack.number_of_attacks,
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    skill_position,
+                    y,
+                    (
+                        f"{attack.attack_skill}+"
+                        if attack.attack_skill is not None
+                        else "N/A"
+                    ),
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    strength_position,
+                    y,
+                    str(attack.strength),
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    ap_position,
+                    y,
+                    str(attack.armor_penetration),
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    damage_position,
+                    y,
+                    attack.damage,
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+
+                if attack == attack_list[-1]:
+                    dotted_line(LEFT_MARGIN, y + half_cell_height, 2800, ax)
+                y += cell_height
+
+            darken = not darken
 
     return figure
 
