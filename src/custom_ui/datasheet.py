@@ -10,6 +10,7 @@ from matplotlib.axes import Axes
 from matplotlib import font_manager
 from typing import Tuple, List
 
+from lib import __version__
 from lib.interfaces import UnitStatBlock, StatBlock, CreatureAttack
 
 mpl.use("QtAgg")
@@ -243,6 +244,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
 
         x += interval
 
+    y = 650
     interval = 300
     font_size = 20
     line_offset = 25
@@ -262,7 +264,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
 
     if ranged:
         # Ranged weapon title
-        vertical_position = 650
+        vertical_position = y
 
         attacks_text = ax.text(
             LEFT_MARGIN,
@@ -337,7 +339,9 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             horizontalalignment="center",
         )
 
-        draw_separator_line((LEFT_MARGIN, vertical_position + line_offset), 2800, 2, ax, RED, True)
+        draw_separator_line(
+            (LEFT_MARGIN, vertical_position + line_offset), 2800, 2, ax, RED, True
+        )
 
         # Ranged weapons
 
@@ -544,7 +548,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
 
     if melee:
         # Melee weapon title
-        title_offset = 75
+        title_offset = 75 if ranged else 0
         vertical_position = y + title_offset
 
         attacks_text = ax.text(
@@ -620,7 +624,9 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             horizontalalignment="center",
         )
 
-        draw_separator_line((LEFT_MARGIN, vertical_position + line_offset), 2800, 2, ax, RED, True)
+        draw_separator_line(
+            (LEFT_MARGIN, vertical_position + line_offset), 2800, 2, ax, RED, True
+        )
 
         # Melee weapons
 
@@ -822,6 +828,21 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 y += cell_height
 
             darken = not darken
+
+    # Patch version
+
+    x = 2675
+    y = 1975
+
+    ax.text(
+        x,
+        y,
+        f"Balance patch v{__version__}",
+        fontfamily="Scala Sans",
+        fontweight="regular",
+        fontsize=11,
+        color="g",
+    )
 
     return figure
 
