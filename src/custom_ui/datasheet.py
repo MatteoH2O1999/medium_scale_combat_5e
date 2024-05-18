@@ -243,20 +243,26 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
 
         x += interval
 
+    interval = 300
+    font_size = 20
+    line_offset = 25
+    text_offset = 65
+    range_position = 1200
+    attacks_position = range_position + interval
+    skill_position = attacks_position + interval
+    strength_position = skill_position + interval
+    ap_position = strength_position + interval
+    damage_position = ap_position + interval
+    name_x = LEFT_MARGIN + 20
+    cell_height = 75
+    half_cell_height = cell_height / 2
+    data_font_size = 17
+
     ranged = any([not a.is_melee for a in stat_block.attacks])
 
     if ranged:
         # Ranged weapon title
         vertical_position = 650
-        interval = 300
-        font_size = 20
-
-        range_position = 1200
-        attacks_position = range_position + interval
-        skill_position = attacks_position + interval
-        strength_position = skill_position + interval
-        ap_position = strength_position + interval
-        damage_position = ap_position + interval
 
         attacks_text = ax.text(
             LEFT_MARGIN,
@@ -331,15 +337,11 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             horizontalalignment="center",
         )
 
-        draw_separator_line((LEFT_MARGIN, 675), 2800, 2, ax, RED, True)
+        draw_separator_line((LEFT_MARGIN, vertical_position + line_offset), 2800, 2, ax, RED, True)
 
         # Ranged weapons
 
-        y = 715
-        name_x = LEFT_MARGIN + 20
-        cell_height = 75
-        half_cell_height = cell_height / 2
-        data_font_size = 17
+        y = vertical_position + text_offset
         darken = False
 
         for ranged_attack in stat_block.attacks:
@@ -443,7 +445,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             if attack_list[0].is_melee:
                 continue
 
-            # Ranged mumultiattack single attack
+            # Ranged multiattack single attack
             for attack in attack_list:
                 if darken:
                     points = [
@@ -471,6 +473,289 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                     range_position,
                     y,
                     f"{attack.range} ft.",
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    attacks_position,
+                    y,
+                    attack.number_of_attacks,
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    skill_position,
+                    y,
+                    (
+                        f"{attack.attack_skill}+"
+                        if attack.attack_skill is not None
+                        else "N/A"
+                    ),
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    strength_position,
+                    y,
+                    str(attack.strength),
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    ap_position,
+                    y,
+                    str(attack.armor_penetration),
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+                ax.text(
+                    damage_position,
+                    y,
+                    attack.damage,
+                    fontfamily="Spectral SC",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                    horizontalalignment="center",
+                )
+
+                if attack == attack_list[-1]:
+                    dotted_line(LEFT_MARGIN, y + half_cell_height, 2800, ax)
+                y += cell_height
+
+            darken = not darken
+
+    melee = any([a.is_melee for a in stat_block.attacks])
+
+    if melee:
+        # Melee weapon title
+        title_offset = 75
+        vertical_position = y + title_offset
+
+        attacks_text = ax.text(
+            LEFT_MARGIN,
+            vertical_position,
+            "M",
+            fontfamily="Spectral SC",
+            fontweight="bold",
+            fontsize=28,
+        )
+        ax.annotate(
+            "ELEE WEAPONS",
+            xycoords=attacks_text,
+            xy=(1, 0),
+            verticalalignment="bottom",
+            fontfamily="Spectral SC",
+            fontweight="bold",
+            fontsize=24,
+        )
+
+        ax.text(
+            range_position,
+            vertical_position,
+            "Range",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            attacks_position,
+            vertical_position,
+            "Attacks",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            skill_position,
+            vertical_position,
+            "Skill",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            strength_position,
+            vertical_position,
+            "Strength",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            ap_position,
+            vertical_position,
+            "AP",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+        ax.text(
+            damage_position,
+            vertical_position,
+            "Damage",
+            fontfamily="Spectral SC",
+            fontweight="regular",
+            fontsize=font_size,
+            horizontalalignment="center",
+        )
+
+        draw_separator_line((LEFT_MARGIN, vertical_position + line_offset), 2800, 2, ax, RED, True)
+
+        # Melee weapons
+
+        y = vertical_position + text_offset
+        darken = False
+
+        for ranged_attack in stat_block.attacks:
+            if not ranged_attack.is_melee:
+                continue
+            if darken:
+                points = [
+                    (LEFT_MARGIN, y - half_cell_height),
+                    (LEFT_MARGIN + 2800, y - half_cell_height),
+                    (LEFT_MARGIN + 2800, y + half_cell_height),
+                    (LEFT_MARGIN, y + half_cell_height),
+                ]
+
+                x_points = [p[0] for p in points]
+                y_points = [p[1] for p in points]
+                ax.fill(x_points, y_points, DARKER_CELL)
+
+            ax.text(
+                name_x,
+                y,
+                ranged_attack.name,
+                fontfamily="Scala Sans",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+            )
+
+            ax.text(
+                range_position,
+                y,
+                f"Melee",
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center",
+            )
+            ax.text(
+                attacks_position,
+                y,
+                ranged_attack.number_of_attacks,
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center",
+            )
+            ax.text(
+                skill_position,
+                y,
+                (
+                    f"{ranged_attack.attack_skill}+"
+                    if ranged_attack.attack_skill is not None
+                    else "N/A"
+                ),
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center",
+            )
+            ax.text(
+                strength_position,
+                y,
+                str(ranged_attack.strength),
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center",
+            )
+            ax.text(
+                ap_position,
+                y,
+                str(ranged_attack.armor_penetration),
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center",
+            )
+            ax.text(
+                damage_position,
+                y,
+                ranged_attack.damage,
+                fontfamily="Spectral SC",
+                fontweight="regular",
+                fontsize=data_font_size,
+                verticalalignment="center",
+                horizontalalignment="center",
+            )
+
+            dotted_line(LEFT_MARGIN, y + half_cell_height, 2800, ax)
+
+            y += cell_height
+            darken = not darken
+
+        # Melee multiattacks
+
+        for multiattack_name, attack_list in stat_block.multiattacks.items():
+            if not attack_list[0].is_melee:
+                continue
+
+            # Melee multiattack single attack
+            for attack in attack_list:
+                if darken:
+                    points = [
+                        (LEFT_MARGIN, y - half_cell_height),
+                        (LEFT_MARGIN + 2800, y - half_cell_height),
+                        (LEFT_MARGIN + 2800, y + half_cell_height),
+                        (LEFT_MARGIN, y + half_cell_height),
+                    ]
+
+                    x_points = [p[0] for p in points]
+                    y_points = [p[1] for p in points]
+                    ax.fill(x_points, y_points, DARKER_CELL)
+
+                ax.text(
+                    name_x,
+                    y,
+                    f"{multiattack_name} - {attack.name}",
+                    fontfamily="Scala Sans",
+                    fontweight="regular",
+                    fontsize=data_font_size,
+                    verticalalignment="center",
+                )
+
+                ax.text(
+                    range_position,
+                    y,
+                    f"Melee",
                     fontfamily="Spectral SC",
                     fontweight="regular",
                     fontsize=data_font_size,
