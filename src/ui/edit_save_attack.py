@@ -186,6 +186,17 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.attackNameInput, self.attackTypeInput)
+        Dialog.setTabOrder(self.attackTypeInput, self.attackRangeInput)
+        Dialog.setTabOrder(self.attackRangeInput, self.multihitInput)
+        Dialog.setTabOrder(self.multihitInput, self.dcInput)
+        Dialog.setTabOrder(self.dcInput, self.targetTypeInput)
+        Dialog.setTabOrder(self.targetTypeInput, self.firstParameterInput)
+        Dialog.setTabOrder(self.firstParameterInput, self.secondParameterInput)
+        Dialog.setTabOrder(self.secondParameterInput, self.baseDamageInput)
+        Dialog.setTabOrder(self.baseDamageInput, self.abilityScoreScalingInput)
+        Dialog.setTabOrder(self.abilityScoreScalingInput, self.damageScalingCheck)
+        Dialog.setTabOrder(self.damageScalingCheck, self.damageProficiencyCheck)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
