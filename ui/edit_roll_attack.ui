@@ -361,6 +361,22 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>attackNameInput</tabstop>
+  <tabstop>attackTypeInput</tabstop>
+  <tabstop>attackRangeInput</tabstop>
+  <tabstop>multihitInput</tabstop>
+  <tabstop>abilityScoreScalingInput</tabstop>
+  <tabstop>targetTypeInput</tabstop>
+  <tabstop>firstParameterInput</tabstop>
+  <tabstop>secondParameterInput</tabstop>
+  <tabstop>baseToHitInput</tabstop>
+  <tabstop>toHitScalingCheck</tabstop>
+  <tabstop>toHitProficiencyCheck</tabstop>
+  <tabstop>baseDamageInput</tabstop>
+  <tabstop>damageScalingCheck</tabstop>
+  <tabstop>damageProficiencyCheck</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

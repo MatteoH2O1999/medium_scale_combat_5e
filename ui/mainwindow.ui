@@ -625,6 +625,29 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>nameInput</tabstop>
+  <tabstop>hpBox</tabstop>
+  <tabstop>acBox</tabstop>
+  <tabstop>speedBox</tabstop>
+  <tabstop>profBox</tabstop>
+  <tabstop>strBox</tabstop>
+  <tabstop>dexBox</tabstop>
+  <tabstop>conBox</tabstop>
+  <tabstop>intBox</tabstop>
+  <tabstop>wisBox</tabstop>
+  <tabstop>chaBox</tabstop>
+  <tabstop>attacksListView</tabstop>
+  <tabstop>addRollAttackButton</tabstop>
+  <tabstop>addSaveAttackButton</tabstop>
+  <tabstop>editAttackButton</tabstop>
+  <tabstop>deleteAttackButton</tabstop>
+  <tabstop>multiattackListView</tabstop>
+  <tabstop>addMultiattackButton</tabstop>
+  <tabstop>editMultiattackButton</tabstop>
+  <tabstop>deleteMultiattackButton</tabstop>
+  <tabstop>previewsWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
