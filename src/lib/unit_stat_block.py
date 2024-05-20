@@ -146,9 +146,9 @@ def _saving_throw_value_from_stat_block(
     ac = stat_block.armor_class
     if ac < 11:
         return 5
-    elif ac < 14:
+    elif ac < 16:
         return 4
-    elif ac < 18:
+    elif ac < 20:
         return 3
     return 2
 
@@ -157,17 +157,13 @@ def _invulnerable_saving_throw_value_from_stat_block(
     stat_block: StatBlock,
 ) -> Optional[int]:  # pragma: no cover
     ac = stat_block.armor_class
-    if ac < 18:
+    if ac < 17:
         return None
-    elif ac < 20:
+    elif ac < 21:
         return 6
-    elif ac < 22:
+    elif ac < 23:
         return 5
-    elif ac < 25:
-        return 4
-    elif ac < 30:
-        return 3
-    return 2
+    return 4
 
 
 def _hit_points_per_creature_from_stat_block(
