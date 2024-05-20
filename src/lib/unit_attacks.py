@@ -175,7 +175,12 @@ def _strength_value_from_attack(attack: CreatureAttack) -> int:  # pragma: no co
 def _armor_penetration_value_from_attack(
     attack: CreatureAttack,
 ) -> int:  # pragma: no cover
-    return -math.ceil(abs(attack.total_average_damage // 20))
+    damage_pen = math.floor(attack.total_average_damage / 20)
+    to_hit_pen = (
+        math.floor(max(attack.to_hit_bonus, 0) / 7) if not attack.target.is_aoe else 1
+    )
+    total_pen = damage_pen + to_hit_pen
+    return -total_pen
 
 
 def _damage_from_attack(attack: CreatureAttack) -> str:  # pragma: no cover
