@@ -158,7 +158,7 @@ def _attack_skill_from_attack(
         return 5
     elif attack.to_hit_bonus < 5:
         return 4
-    elif attack.to_hit_bonus < 12:
+    elif attack.to_hit_bonus < 10:
         return 3
     return 2
 
