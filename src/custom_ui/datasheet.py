@@ -259,6 +259,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     cell_height = 75
     half_cell_height = cell_height / 2
     data_font_size = 17
+    tag_size = data_font_size - 5
 
     ranged = any([not a.is_melee for a in stat_block.attacks])
 
@@ -363,7 +364,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 y_points = [p[1] for p in points]
                 ax.fill(x_points, y_points, DARKER_CELL)
 
-            ax.text(
+            attack_name_text = ax.text(
                 name_x,
                 y,
                 ranged_attack.name,
@@ -372,6 +373,18 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 fontsize=data_font_size,
                 verticalalignment="center",
             )
+
+            if ranged_attack.is_aoe:
+                ax.annotate(
+                    "[Area of Effect]",
+                    xycoords=attack_name_text,
+                    xy=(1, 0),
+                    verticalalignment="bottom",
+                    color=RED,
+                    fontfamily="Scala Sans",
+                    fontweight="regular",
+                    fontsize=tag_size,
+                )
 
             ax.text(
                 range_position,
@@ -463,7 +476,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                     y_points = [p[1] for p in points]
                     ax.fill(x_points, y_points, DARKER_CELL)
 
-                ax.text(
+                name_text = ax.text(
                     name_x,
                     y,
                     f"{multiattack_name} - {attack.name}",
@@ -472,6 +485,18 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                     fontsize=data_font_size,
                     verticalalignment="center",
                 )
+
+                if attack.is_aoe:
+                    ax.annotate(
+                        "[Area of Effect]",
+                        xycoords=name_text,
+                        xy=(1, 0),
+                        verticalalignment="bottom",
+                        color=RED,
+                        fontfamily="Scala Sans",
+                        fontweight="regular",
+                        fontsize=tag_size,
+                    )
 
                 ax.text(
                     range_position,
@@ -633,8 +658,8 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
         y = vertical_position + text_offset
         darken = False
 
-        for ranged_attack in stat_block.attacks:
-            if not ranged_attack.is_melee:
+        for melee_attack in stat_block.attacks:
+            if not melee_attack.is_melee:
                 continue
             if darken:
                 points = [
@@ -648,15 +673,27 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 y_points = [p[1] for p in points]
                 ax.fill(x_points, y_points, DARKER_CELL)
 
-            ax.text(
+            name_text = ax.text(
                 name_x,
                 y,
-                ranged_attack.name,
+                melee_attack.name,
                 fontfamily="Scala Sans",
                 fontweight="regular",
                 fontsize=data_font_size,
                 verticalalignment="center",
             )
+
+            if melee_attack.is_aoe:
+                ax.annotate(
+                    "[Area of Effect]",
+                    xycoords=name_text,
+                    xy=(1, 0),
+                    verticalalignment="bottom",
+                    color=RED,
+                    fontfamily="Scala Sans",
+                    fontweight="regular",
+                    fontsize=tag_size,
+                )
 
             ax.text(
                 range_position,
@@ -671,7 +708,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             ax.text(
                 attacks_position,
                 y,
-                ranged_attack.number_of_attacks,
+                melee_attack.number_of_attacks,
                 fontfamily="Spectral SC",
                 fontweight="regular",
                 fontsize=data_font_size,
@@ -682,8 +719,8 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                 skill_position,
                 y,
                 (
-                    f"{ranged_attack.attack_skill}+"
-                    if ranged_attack.attack_skill is not None
+                    f"{melee_attack.attack_skill}+"
+                    if melee_attack.attack_skill is not None
                     else "N/A"
                 ),
                 fontfamily="Spectral SC",
@@ -695,7 +732,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             ax.text(
                 strength_position,
                 y,
-                str(ranged_attack.strength),
+                str(melee_attack.strength),
                 fontfamily="Spectral SC",
                 fontweight="regular",
                 fontsize=data_font_size,
@@ -705,7 +742,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             ax.text(
                 ap_position,
                 y,
-                str(ranged_attack.armor_penetration),
+                str(melee_attack.armor_penetration),
                 fontfamily="Spectral SC",
                 fontweight="regular",
                 fontsize=data_font_size,
@@ -715,7 +752,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
             ax.text(
                 damage_position,
                 y,
-                ranged_attack.damage,
+                melee_attack.damage,
                 fontfamily="Spectral SC",
                 fontweight="regular",
                 fontsize=data_font_size,
@@ -748,7 +785,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                     y_points = [p[1] for p in points]
                     ax.fill(x_points, y_points, DARKER_CELL)
 
-                ax.text(
+                name_text = ax.text(
                     name_x,
                     y,
                     f"{multiattack_name} - {attack.name}",
@@ -757,6 +794,18 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
                     fontsize=data_font_size,
                     verticalalignment="center",
                 )
+
+                if attack.is_aoe:
+                    ax.annotate(
+                        "[Area of Effect]",
+                        xycoords=name_text,
+                        xy=(1, 0),
+                        verticalalignment="bottom",
+                        color=RED,
+                        fontfamily="Scala Sans",
+                        fontweight="regular",
+                        fontsize=tag_size,
+                    )
 
                 ax.text(
                     range_position,
