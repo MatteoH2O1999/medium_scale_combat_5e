@@ -6,7 +6,7 @@ import lib.unit_attacks as attacks
 
 
 def get_unit_attack_valid_params():
-    return ["attack name", 5, "D3+1", 3, 6, -1, "2"]
+    return ["attack name", 5, "D3+1", 3, 6, -1, "2", False]
 
 
 def test_valid_melee_constructor():
@@ -20,6 +20,7 @@ def test_valid_melee_constructor():
     assert melee_attack.armor_penetration == -1
     assert melee_attack.damage == "2"
     assert melee_attack.is_melee is True
+    assert melee_attack.is_aoe is False
 
 
 def test_valid_ranged_constructor():
@@ -33,6 +34,7 @@ def test_valid_ranged_constructor():
     assert ranged_attack.armor_penetration == -1
     assert ranged_attack.damage == "2"
     assert ranged_attack.is_melee is False
+    assert ranged_attack.is_aoe is False
 
 
 def test_invalid_name_melee_constructor():
@@ -397,9 +399,9 @@ def test_from_creature_attack_ranged():
 
 
 def test_eq():
-    a = attacks.MeleeUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1")
-    b = attacks.MeleeUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1")
-    c = attacks.RangedUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1")
+    a = attacks.MeleeUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1", False)
+    b = attacks.MeleeUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1", False)
+    c = attacks.RangedUnitAttack("melee attack name", 5, "2", 3, 6, 0, "1", False)
 
     assert a == b
     assert a != c

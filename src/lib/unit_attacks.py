@@ -23,6 +23,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         strength: int,
         ap: int,
         damage: str,
+        aoe: bool,
     ):
         """
         A generic medium combat for 5e attack
@@ -33,6 +34,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         :param strength: The attack's strength
         :param ap: The attack's armor penetration
         :param damage: The attack's damage die expression
+        :param aoe: Whether the attack is and Area of Effect attack.
         """
         if not name or not isinstance(name, str):
             raise InvalidAttackParamError(
@@ -81,6 +83,7 @@ class UnitAttack(UnitAttackInterface, ABC):
         self._strength: int = strength
         self._ap: int = ap
         self._damage: str = damage
+        self._aoe: bool = bool(aoe)
 
     @property
     def name(self) -> str:
@@ -110,6 +113,10 @@ class UnitAttack(UnitAttackInterface, ABC):
     def damage(self) -> str:
         return self._damage
 
+    @property
+    def is_aoe(self) -> bool:
+        return self._aoe
+
     def __eq__(self, other):
         if not isinstance(other, UnitAttackInterface):
             return False
@@ -122,6 +129,7 @@ class UnitAttack(UnitAttackInterface, ABC):
             and self.armor_penetration == other.armor_penetration
             and self.damage == other.damage
             and self.is_melee == other.is_melee
+            and self.is_aoe == other.is_aoe
         )
 
 
@@ -202,6 +210,10 @@ def _number_of_attacks_from_attack(attack: CreatureAttack) -> str:  # pragma: no
     return str(attacks)
 
 
+def _is_aoe_from_attack(attack: CreatureAttack) -> bool:  # pragma: no cover
+    return attack.target.is_aoe
+
+
 def from_creature_attack(attack: CreatureAttack) -> UnitAttack:
     weapon_range = _range_from_attack(attack)
     damage = _damage_from_attack(attack)
@@ -209,10 +221,11 @@ def from_creature_attack(attack: CreatureAttack) -> UnitAttack:
     attacks = _number_of_attacks_from_attack(attack)
     strength = _strength_value_from_attack(attack)
     skill = _attack_skill_from_attack(attack)
+    aoe = _is_aoe_from_attack(attack)
     if attack.is_melee:
         return MeleeUnitAttack(
-            attack.name, weapon_range, attacks, skill, strength, ap, damage
+            attack.name, weapon_range, attacks, skill, strength, ap, damage, aoe
         )
     return RangedUnitAttack(
-        attack.name, weapon_range, attacks, skill, strength, ap, damage
+        attack.name, weapon_range, attacks, skill, strength, ap, damage, aoe
     )

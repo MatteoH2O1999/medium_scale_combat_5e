@@ -160,6 +160,10 @@ class MockAttack(interfaces.UnitAttack):
     def is_melee(self) -> bool:
         return self._melee
 
+    @property
+    def is_aoe(self) -> bool:
+        return False
+
     def __eq__(self, other):
         if not isinstance(other, MockAttack):
             return False

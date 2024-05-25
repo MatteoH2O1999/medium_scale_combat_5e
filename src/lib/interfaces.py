@@ -261,6 +261,13 @@ class UnitAttack(ABC):
         Whether the attack is melee
         """
 
+    @property
+    @abstractmethod
+    def is_aoe(self) -> bool:
+        """
+        Whether the attack is an Area of Effect attack
+        """
+
 
 class UnitStatBlock(ABC):
     """
