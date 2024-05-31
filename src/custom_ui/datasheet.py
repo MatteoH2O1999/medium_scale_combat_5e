@@ -259,7 +259,7 @@ def datasheet_from_unit_stat_block(stat_block: UnitStatBlock) -> plt.Figure:
     cell_height = 75
     half_cell_height = cell_height / 2
     data_font_size = 17
-    tag_size = data_font_size - 5
+    tag_size = 12
 
     ranged = any([not a.is_melee for a in stat_block.attacks])
 
