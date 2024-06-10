@@ -144,7 +144,9 @@ def _saving_throw_value_from_stat_block(
     stat_block: StatBlock,
 ) -> int:  # pragma: no cover
     ac = stat_block.armor_class
-    if ac < 11:
+    if ac < 10:
+        return 6
+    elif ac < 13:
         return 5
     elif ac < 16:
         return 4
