@@ -322,6 +322,8 @@ class Ui_MainWindow(object):
         self.actionExportDatasheet.setIconVisibleInMenu(True)
         self.actionExportDatasheet.setShortcutVisibleInContextMenu(True)
         self.actionExportDatasheet.setObjectName("actionExportDatasheet")
+        self.actionAbout = QtGui.QAction(parent=MainWindow)
+        self.actionAbout.setObjectName("actionAbout")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
@@ -330,6 +332,7 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionExportDatasheet)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
+        self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
         self.nameLabel.setBuddy(self.nameInput)
@@ -426,6 +429,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Export datasheet")
         )
         self.actionExportDatasheet.setShortcut(_translate("MainWindow", "Ctrl+E"))
+        self.actionAbout.setText(_translate("MainWindow", "About"))
 
 
 from custom_ui.matplotlib import MplCanvas

@@ -12,6 +12,7 @@ from custom_ui.datasheet import (
     export_datasheet_from_unit_stat_block,
 )
 from custom_ui.matplotlib import MplCanvas
+from lib import __version__
 from lib.ability_scores import Scores
 from lib.unit_stat_block import from_stat_block
 from ui.edit_multiattack import Ui_Dialog as Ui_MultiattackDialog
@@ -495,6 +496,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionSave.triggered.connect(self.save)
         self.actionSave_as.triggered.connect(self.save_as)
         self.actionExportDatasheet.triggered.connect(self.export)
+        self.actionAbout.triggered.connect(self.about)
 
     def delete_multiattack(self):
         indexes = self.multiattackListView.selectedIndexes()
@@ -689,6 +691,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.renderer.quit()
         self.renderer.join()
         sys.exit(0)
+
+    def about(self):
+        text = "Datasheet generator for medium scale combat for 5e."
+        informative_text = f"Sheet balance patch v{__version__}.\n\n"
+        informative_text += (
+            f"This software is licensed under the GNU-AGPLv3 license.\n\n"
+        )
+        informative_text += "This program is distributed in the hope that it will be useful but WITHOUT ANY WARRANTY; "
+        informative_text += "without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+        informative_text += (
+            "See the GNU Affero General Public License for more details."
+        )
+
+        dialog = QtWidgets.QMessageBox(self)
+        dialog.setWindowTitle("About")
+        dialog.setIcon(QtWidgets.QMessageBox.Icon.Information)
+        dialog.setText(text)
+        dialog.setInformativeText(informative_text)
+        dialog.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Close)
+        dialog.exec()
 
 
 if __name__ == "__main__":
