@@ -16,7 +16,7 @@ concurrency:
 
 env:
   EXEC_NAME: datasheet_generator
-  BUILD_VERSION: "3.12"
+  BUILD_VERSION: "3.10"
 
 jobs:
   lint:
