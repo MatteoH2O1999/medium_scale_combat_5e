@@ -41,11 +41,12 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon="src/resources/icon.ico"
 )
 
 if sys.platform == 'darwin':
     app = BUNDLE(exe,
         name='datasheet_generator.app',
-        icon=None,
+        icon="src/resources/icon.icns",
         bundle_identifier=None
     )
