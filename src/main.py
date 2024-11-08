@@ -3,7 +3,7 @@ import sys
 import threading
 import time
 import pathlib
-from PyQt6 import QtWidgets
+from PyQt6 import QtWidgets, QtGui
 from typing import Optional
 
 from custom_ui.datasheet import (
@@ -28,6 +28,8 @@ from model import (
     SavingThrowModel,
     from_model,
 )
+
+icon_path = pathlib.Path(__file__).parent.joinpath("resources", "icon.ico")
 
 
 class Renderer(threading.Thread):
@@ -447,6 +449,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
+        print(icon_path)
+        self.setWindowIcon(QtGui.QIcon(str(icon_path)))
         self.file = ""
         self.model = StatBlockModel()
         self.attacks_model = AttackListModel(self.model)
