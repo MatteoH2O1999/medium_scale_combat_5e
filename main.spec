@@ -3,6 +3,8 @@ import sys
 
 block_cipher = None
 
+executable_name = 'Datasheet generator'
+
 a = Analysis(
     ['src/main.py'],
     pathex=[],
@@ -28,7 +30,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='datasheet_generator',
+    name=executable_name,
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -46,7 +48,7 @@ exe = EXE(
 
 if sys.platform == 'darwin':
     app = BUNDLE(exe,
-        name='datasheet_generator.app',
+        name=f'{executable_name}.app',
         icon="src/resources/icon.icns",
         bundle_identifier=None
     )
