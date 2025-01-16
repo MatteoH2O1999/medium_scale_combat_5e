@@ -26,6 +26,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          persist-credentials: false
           submodules: recursive
       - name: Setup Python
         uses: MatteoH2O1999/setup-python@v5
@@ -54,6 +55,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          persist-credentials: false
           submodules: recursive
       - name: Setup Python ${{ matrix.python-version }}
         uses: MatteoH2O1999/setup-python@v5
@@ -87,6 +89,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          persist-credentials: false
           submodules: recursive
       - name: Setup Python
         uses: MatteoH2O1999/setup-python@v5
@@ -114,6 +117,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          persist-credentials: false
           submodules: recursive
       - name: Setup Python
         uses: MatteoH2O1999/setup-python@v5
