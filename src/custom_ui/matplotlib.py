@@ -17,8 +17,8 @@ class MplCanvas(FigureCanvasQTAgg):
         self.axes.clear()
         fig.subplots_adjust(0.0, 0.0, 1.0, 1.0)
         fig.canvas.draw()
-        img = Image.frombytes(
-            "RGB", fig.canvas.get_width_height(), fig.canvas.tostring_rgb()
+        img = Image.frombuffer(
+            "RGBA", fig.canvas.get_width_height(), fig.canvas.buffer_rgba()
         )
         plt.close(fig)
         self.axes.imshow(img)
