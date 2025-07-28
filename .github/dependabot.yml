@@ -8,8 +8,6 @@ updates:
     interval: daily
     time: '00:00'
   open-pull-requests-limit: 10
-  reviewers:
-    - MatteoH2O1999
   assignees:
     - MatteoH2O1999
   commit-message:
@@ -25,8 +23,6 @@ updates:
     day: monday
     time: '00:00'
   open-pull-requests-limit: 10
-  reviewers:
-    - MatteoH2O1999
   assignees:
     - MatteoH2O1999
   commit-message:
@@ -42,8 +38,6 @@ updates:
     day: monday
     time: '00:00'
   open-pull-requests-limit: 10
-  reviewers:
-    - MatteoH2O1999
   assignees:
     - MatteoH2O1999
   commit-message:
