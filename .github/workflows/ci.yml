@@ -29,7 +29,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup Python
-        uses: MatteoH2O1999/setup-python@v5
+        uses: MatteoH2O1999/setup-python@v6
         with:
           python-version: ${{ env.BUILD_VERSION }}
           cache-build: true
@@ -58,7 +58,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup Python ${{ matrix.python-version }}
-        uses: MatteoH2O1999/setup-python@v5
+        uses: MatteoH2O1999/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache-build: true
@@ -92,7 +92,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup Python
-        uses: MatteoH2O1999/setup-python@v5
+        uses: MatteoH2O1999/setup-python@v6
         with:
           python-version: ${{ env.BUILD_VERSION }}
           cache-build: true
@@ -120,7 +120,7 @@ jobs:
           persist-credentials: false
           submodules: recursive
       - name: Setup Python
-        uses: MatteoH2O1999/setup-python@v5
+        uses: MatteoH2O1999/setup-python@v6
         with:
           python-version: ${{ env.BUILD_VERSION }}
           cache-build: true
