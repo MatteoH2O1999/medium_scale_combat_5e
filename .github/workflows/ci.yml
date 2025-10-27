@@ -101,7 +101,7 @@ jobs:
       - name: Build executable
         run: pyinstaller ./main.spec
       - name: Upload executable
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ env.EXEC_NAME }}-${{ runner.os }}
           retention-days: 1
@@ -133,7 +133,7 @@ jobs:
       - name: Zip assets
         run: python ./.github/scripts/zip_executables.py
       - name: Upload assets as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ env.EXEC_NAME }}-executables
           path: ./to_upload
