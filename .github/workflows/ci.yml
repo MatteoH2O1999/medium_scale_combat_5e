@@ -35,8 +35,6 @@ jobs:
           cache-build: true
       - name: Install dependencies
         run: pip install -r ./requirements.txt -r requirements-dev.txt
-      - name: Install UI dependencies
-        run: pip install -r ./requirements-ui-design.txt
       - name: Black code style
         run: black --check ./tests ./src
       - name: Check UI is compiled
